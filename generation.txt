@@ -1,0 +1,2 @@
+javac -sourcepath ./src -d ./bin ./src/Simulateur.java
+javadoc -sourcepath ./src -d ./doc -subpackages .
