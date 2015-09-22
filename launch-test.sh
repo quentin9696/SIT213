@@ -15,7 +15,7 @@ fi
 
 cd $sources
 
-cmd_base='java Simulateur '
+cmd_base='java Simulateur -s '
 
 echo '######### Début du test 1  #########'
 echo "$cmd_base"
