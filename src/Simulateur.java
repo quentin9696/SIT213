@@ -23,6 +23,8 @@ import java.io.PrintWriter;
 /** La classe Simulateur permet de construire et simuler une chaine de transmission composÃ©e d'une Source, d'un nombre variable de Transmetteur(s) et d'une Destination.  
  * @author cousin
  * @author prou
+ * @author vallin
+ * @author omnes
  *
  */
    public class Simulateur {
