@@ -64,11 +64,11 @@ import java.io.PrintWriter;
       	
          analyseArguments(args);
          
-	System.out.println("Message aléatoire " + messageAleatoire);
+	/*System.out.println("Message aléatoire " + messageAleatoire);
 	System.out.println("Message aléatoire avec germe : " + aleatoireAvecGerme);
 	System.out.println("Nb bits : " + nbBitsMess);
 	System.out.println("Seed : " + seed);
-	System.out.println("Message fixe : " + messageString);
+	System.out.println("Message fixe : " + messageString);*/
 
         // Message pas aléatoire (-m avec suite logique) 
          if(!messageAleatoire) {
