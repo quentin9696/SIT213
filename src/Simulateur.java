@@ -41,16 +41,29 @@ import java.io.PrintWriter;
       private          int nbBitsMess = 100; 
    /** la chaine de caractÃšres correspondant Ã  m dans l'argument -mess m */
       private          String messageString = "100";
-   	
+   /** le nb d'echantillons par bit correspondant à -nbEch ne*/
+      private 			int nbEch = 30;
+   /** la forme du signal. Correspond au paramètre -form f */
+      private 			String forme = "RZ";
+   /** l'amplitude du signal. Correspond au paramètre -ampl min max */
+      private 			float min = 0.0f;
+      private			float max = 1.0f;
    
    
    	
    /** le  composant Source de la chaine de transmission */
       private			  Source <Boolean>  source = null;
+      
+      private			Transmetteur<Boolean, Float> emetteur = null;
+      
    /** le  composant Transmetteur parfait logique de la chaine de transmission */
       private			  Transmetteur <Boolean, Boolean>  transmetteurLogique = null;
+      private			  Transmetteur <Float, Float>  transmetteurAnalogique = null;
+      
+      private			Transmetteur<Float, Boolean> recepteur = null;
    /** le  composant Destination de la chaine de transmission */
       private			  Destination <Boolean>  destination = null;
+      
    	
    
    /** Le constructeur de Simulateur construit une chaine de transmission composÃ©e d'une Source <Boolean>, d'une Destination <Boolean> et de Transmetteur(s) [voir la mÃ©thode analyseArguments]...  
@@ -87,18 +100,42 @@ import java.io.PrintWriter;
         	 }
          }
          
-	// transmetteur parfait 
-         transmetteurLogique = new TransmetteurParfait();
-         destination = new DestinationFinale();
-         source.connecter(transmetteurLogique);
-         transmetteurLogique.connecter(destination);
          
-	// Ajout des sonde si option -s
+         // Emetteur/Recepteur analogique
+         emetteur = new EmetteurAnalogique(min, max, forme, nbEch);
+         recepteur = new RecepteurAnalogique(min, max, forme, nbEch);
+         
+         //Transmeteur
+         transmetteurAnalogique = new TransmetteurParfaitAnalogique();
+         
+         
+         // Destination 
+         destination = new DestinationFinale();
+         
+         // Connection entre les modules
+         
+         source.connecter(emetteur);
+         emetteur.connecter(transmetteurAnalogique);
+         transmetteurAnalogique.connecter(recepteur);
+         recepteur.connecter(destination);
+         
+         /*transmetteurLogique = new TransmetteurParfait();
+         source.connecter(transmetteurLogique);
+         transmetteurLogique.connecter(destination);*/
+         
+         
+         // Ajout des sonde si option -s
          if(affichage) {
-        	 SondeLogique sl1 = new SondeLogique("Emetteur", 150);
-             SondeLogique sl2 = new SondeLogique("Recepteur", 150);
+        	 SondeLogique sl1 = new SondeLogique("Source", 150);
+             SondeLogique sl2 = new SondeLogique("Destination", 150);
+             SondeAnalogique sa1 = new SondeAnalogique("Emetteur");
+             SondeAnalogique sa2 = new SondeAnalogique("Recepteur");
+             
              source.connecter(sl1);
-             transmetteurLogique.connecter(sl2);
+             emetteur.connecter(sa1);
+             transmetteurAnalogique.connecter(sa2);
+             recepteur.connecter(sl2);
+             
          }
       	
       }
@@ -173,10 +210,61 @@ import java.io.PrintWriter;
                      throw new ArgumentsException ("Valeur du parametre -mess invalide : " + nbBitsMess);
                }
                else 
-                  throw new ArgumentsException("Valeur du parametre -mess invalide : " + args[i]);
+               		throw new ArgumentsException("Valeur du parametre -mess invalide : " + args[i]);
+            }
+            
+            else if (args[i].matches("-form")) {
+        	   i++; 
+        	   // traiter la valeur associee
+        	   if (args[i].matches("NRZ") || args[i].matches("NRZT") || args[i].matches("RZ")) {
+        		   forme = args[i];
+               } 
+               else 
+            	   throw new ArgumentsException("Valeur du parametre -form invalide : " + args[i]);   
+            }
+            
+            else if (args[i].matches("-nbEch")) {
+        	   i++; 
+        	   // traiter la valeur associee
+        	    try { 
+                   nbEch =new Integer(args[i]);
+                }
+                catch (Exception e) {
+                      throw new ArgumentsException("Valeur du parametre -nbEch  invalide :" + args[i]);
+                }
+        	    
+        	    if(nbEch < 1) {
+        	    	throw new ArgumentsException("Valeur du parametre -nbEch  invalide :" + nbEch);
+        	    }
+                  
+            }
+            else if (args[i].matches("-ampl")) {
+        	   i++; 
+        	   // traiter la valeur associee
+        	   
+        	   try { 
+                   min =new Float(args[i]);
+                }
+                catch (Exception e) {
+                      throw new ArgumentsException("Valeur du parametre -ampl  invalide :" + args[i]);
+                }
+        	   
+        	   i++;
+        	   
+        	   try { 
+                   max =new Float(args[i]);
+                }
+                catch (Exception e) {
+                      throw new ArgumentsException("Valeur du parametre -ampl  invalide :" + args[i]);
+                }
+        	   
+        	   if(!(min < max)) {
+        		   	throw new ArgumentsException("Valeur du parametre -ampl  invalide :" + args[i]);
+        	   }
             }
                                    
-            else throw new ArgumentsException("Option invalide :"+ args[i]);
+            else 
+            	throw new ArgumentsException("Option invalide :"+ args[i]);
          }
       
       }
@@ -208,7 +296,7 @@ import java.io.PrintWriter;
    */   	   
       public float  calculTauxErreurBinaire() {
     	  
-      	// Prend les info reçues et envoyées	
+      	/*// Prend les info reçues et envoyées	
     	  Information<Boolean> infoSource = source.getInformationEmise();
     	  Information<Boolean> infoRecu = destination.getInformationRecue();
 
@@ -224,7 +312,9 @@ import java.io.PrintWriter;
     		  }
     	  }
 	// Calcul du TEB 
-         return  nbErreurs/nbTotal;
+         return  nbErreurs/nbTotal;*/
+    	  
+    	  return 0.0f;
       }
    
    
