@@ -103,7 +103,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 					bitSuivant = informationRecue.iemeElement(i+1);
 				}
 				
-				float prec = 0.0f; 
+				float prec = 0.0f;
 				
 				for(int j=0;j<nbEch; j++) {
 					
