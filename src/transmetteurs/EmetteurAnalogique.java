@@ -383,36 +383,48 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 
 			for(Boolean b : informationRecue) {
 				prec = 0.0f;
+				
 				for(int i=0;i<nbEch; i++) {
 					if(b) { // Si le bit est 1 
-						if(i< nbEch/6) {
-							prec += (6*max/nbEch);
+						if(i< nbEch * 1/3) {
+							informationEmise.add(0.0f);
+						}
+						if(i> nbEch* 1/3 && i < nbEch * 5/12) {
+							prec += (12*max/nbEch);
 							informationEmise.add(prec);
 						}
-						if(i> nbEch/6 && i < nbEch/3) {
+						if(i > nbEch * 5/12 && i < nbEch* 7/12 ) {
 							informationEmise.add(max);
+							prec = max;
 						}
-						if(i > nbEch/3 && i < nbEch/2) {
-							prec-= (6*max/nbEch);
+						if(i> nbEch * 7/12 && i< nbEch * 2/3) {
+							prec-= (12*max/nbEch);
 							informationEmise.add(prec);
-						}if(i > nbEch/2) {
-							informationEmise.add(0.f);
+						}
+						if(i > (nbEch * 2/3)) {
+							informationEmise.add(0.0f);
 						}
 			
 					}
 					else { //si le bit est 0
-						if(i< nbEch/6) {
-							prec -= Math.abs(6*min/nbEch);
+						if(i< nbEch * 1/3) {
+							informationEmise.add(0.0f);
+						}
+						
+						if(i> nbEch* 1/3 && i < nbEch * 5/12) {
+							prec -= Math.abs(12*min/nbEch);
 							informationEmise.add(prec);
 						}
-						if(i> nbEch/6 && i < nbEch/3) {
+						if(i > nbEch * 5/12 && i < nbEch* 7/12 ) {
 							informationEmise.add(min);
+							prec = min;
 						}
-						if(i > nbEch/3 && i < nbEch/2) {
-							prec+= Math.abs(6*min/nbEch);
+						if(i> nbEch * 7/12 && i< nbEch * 2/3) {
+							prec += Math.abs(12*min/nbEch);
 							informationEmise.add(prec);
-						}if(i > nbEch/2) {
-							informationEmise.add(0.f);
+						}
+						if(i > (nbEch * 2/3)) {
+							informationEmise.add(0.0f);
 						}
 						
 					}
