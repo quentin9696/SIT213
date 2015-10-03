@@ -135,6 +135,9 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 				boolean bitSuivant = informationRecue.iemeElement(1);
 				
 				float prec; 
+				float moyenne = (max+min)/2;
+				float coefMax = Math.abs(max);
+				float coefMin = Math.abs(min);
 				
 				for(int i=0; i<informationRecue.nbElements(); i++) {
 					boolean b = informationRecue.iemeElement(i);
@@ -143,13 +146,13 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 						bitSuivant = informationRecue.iemeElement(i+1);
 					}
 					
-					prec = (min + max ) / 2;
+					prec = moyenne;
+					//prec = 0.0f;
+					 if(i == 0) {
+						 prec = 0.0f;
+					 }
 					
 					for(int j=0;j<nbEch; j++) {
-						
-						if(i == 0 && j == 0) {
-							prec = 0.0f;
-						}
 						
 						if(b) { // Si le bit est 1
 							
@@ -161,19 +164,21 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 								}
 								if(j> nbEch/3 && j<nbEch*5/6) {
 									informationEmise.add(max);	
+									prec = max;
 								}
 								
 								// Si le suivant est un 1 on retourne pas à 0
 								if(bitSuivant) {
 									if(j>nbEch*5/6) {
 										informationEmise.add(max);
+										prec = max;
 									}
 								}
 								
 								// On descend à 5/6 
 								else {
 									if(j>nbEch*5/6) {
-										prec -= Math.abs(6*max/nbEch);
+										prec -= (6*coefMax/nbEch);
 										informationEmise.add(prec);
 									}
 								}
@@ -200,7 +205,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 									//Si le bit suivant est à 0 on descend vers 0
 									if(!bitSuivant) {
 										if(j> nbEch*5/6) {
-											prec -= Math.abs(6*max/nbEch);
+											prec -= (6*coefMax/nbEch);
 											informationEmise.add(prec);
 										}
 									}
@@ -209,7 +214,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 								// Si le bit prec était 0, on monte de 0 à 1/6
 								if(!bitPrec){
 									if(j<nbEch*1/6) {
-										prec += Math.abs(6*max/nbEch);
+										prec += (6*coefMax/nbEch);
 										informationEmise.add(prec);
 									}
 									
@@ -230,7 +235,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 									//Sinon on redescend
 									if(!bitSuivant) {
 										if(j> nbEch*5/6) {
-											prec -= Math.abs(6*max/nbEch);
+											prec -= 6*coefMax/nbEch;
 											informationEmise.add(prec);
 										}
 									}
@@ -240,7 +245,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 							if(i == (informationRecue.nbElements()-1) ) { // Le dernier bit
 								if(!bitPrec) { // Si le bit prec est 0
 									if(j<nbEch*1/6) { // On remonte de 0 à 1/6
-										prec += Math.abs(6*max/nbEch);
+										prec += 6*coefMax/nbEch;
 										informationEmise.add(prec);
 									}
 									if(j>nbEch*1/6 && j<nbEch * 2/3) { // On reste au max jusqu'à 2/3
@@ -248,7 +253,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 										prec = max;
 									}
 									if(j>nbEch * 2/3) { // On descend de 2/3 à 1
-										prec -= Math.abs(3*max/nbEch);
+										prec -= 3*max/nbEch;
 										informationEmise.add(prec);
 									}
 								}
@@ -258,7 +263,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 										prec = max;
 									}
 									if(j>nbEch * 2/3) { // de 2/3 à 0 on descend 
-										 prec -= Math.abs(3*max/nbEch);
+										prec -= 3*max/nbEch;
 										 informationEmise.add(prec);
 									}
 									
@@ -270,24 +275,32 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 							// Si premier bit on le démarre de 0
 							if(i == 0) {
 								if(j<nbEch/3) {
-									prec -= Math.abs(3*min/nbEch);
+									if(min > 0) {
+										prec += 3*coefMin/nbEch;
+									}
+									else {
+										prec -= 3*coefMin/nbEch;
+									}
+									
 									informationEmise.add(prec);
 								}
 								if(j> nbEch/3 && j<nbEch*5/6) {
-									informationEmise.add(min);	
+									informationEmise.add(min);
+									prec = min;
 								}
 								
 								// Si le suivant est un 0 on retourne pas à 0
 								if(!bitSuivant) {
 									if(j>nbEch*5/6) {
 										informationEmise.add(min);
+										prec = min;
 									}
 								}
 								
 								// On remonte à 5/6 
 								else {
 									if(j>nbEch*5/6) {
-										prec += Math.abs(6*min/nbEch);
+										prec += 6*coefMin/nbEch;
 										informationEmise.add(prec);
 									}
 								}
@@ -314,7 +327,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 									//Si le bit suivant est à 1 on remonte vers 0
 									if(bitSuivant) {
 										if(j> nbEch*5/6) {
-											prec += Math.abs(6*min/nbEch);
+											prec += 6*coefMin/nbEch;
 											informationEmise.add(prec);
 										}
 									}
@@ -323,7 +336,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 								// Si le bit prec était 1, on monte de 0 à 1/6
 								if(bitPrec){
 									if(j<nbEch*1/6) {
-										prec -= Math.abs(6*min/nbEch);
+										prec -= 6*coefMin/nbEch;
 										informationEmise.add(prec);
 									}
 									
@@ -344,7 +357,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 									//Sinon on remonte
 									if(bitSuivant) {
 										if(j> nbEch*5/6) {
-											prec += Math.abs(6*min/nbEch);
+											prec += 6*coefMin/nbEch;
 											informationEmise.add(prec);
 										}
 									}
@@ -354,28 +367,29 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 							if(i == (informationRecue.nbElements()-1) ) { // Le dernier bit
 								if(bitPrec) { // Si le bit prec est 1
 									if(j<nbEch*1/6) { // On descend de 0 à 1/6
-										prec -= Math.abs(6*min/nbEch);
+										prec -= 6*coefMin/nbEch;
 										informationEmise.add(prec);
 									}
 									if(j>nbEch*1/6 && j<nbEch * 2/3) { // On reste au min jusqu'à 2/3
 										informationEmise.add(min);
 										prec = min;
 									}
-									if(j>nbEch * 2/3) { // On remonte de 2/3 à 1
-										prec += Math.abs(3*min/nbEch);
-										informationEmise.add(prec);
-									}
 								}
 								if(!bitPrec) { // Si le bit prec est 0
 									if(j<nbEch * 2/3) { // On reste au min de 0 à 2/3
 										informationEmise.add(min);
 										prec = min;
+									}	
+								}
+								
+								if(j>nbEch * 2/3) { // de 2/3 à 1 on remonte 
+									if(min > 0) {
+										prec -= 3*coefMin/nbEch;
 									}
-									if(j>nbEch * 2/3) { // de 2/3 à 0 on remonte 
-										 prec += Math.abs(3*min/nbEch);
-										 informationEmise.add(prec);
+									else {
+										prec += 3*coefMin/nbEch;
 									}
-									
+									informationEmise.add(prec);
 								}
 							}
 						}
