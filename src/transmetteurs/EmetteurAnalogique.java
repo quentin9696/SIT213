@@ -89,254 +89,293 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 		}
 		else if(forme.equalsIgnoreCase("NRZT")) {
 			
-			// Prend le bit precedent et suivant
-			boolean bitPrec = informationRecue.iemeElement(0);
-			boolean bitSuivant = informationRecue.iemeElement(1);
-			
-			// Petite excepetion pour le premier bit 
-			
-			
-			for(int i=0; i<informationRecue.nbElements(); i++) {
-				boolean b = informationRecue.iemeElement(i);
-				
-				if(i<(informationRecue.nbElements()-1)) {
-					bitSuivant = informationRecue.iemeElement(i+1);
-				}
+			if(informationRecue.nbElements()<2) {
 				
 				float prec = 0.0f;
 				
-				for(int j=0;j<nbEch; j++) {
-					
-					if(b) { // Si le bit est 1
-						
-						// Si premier bit on le démarre de 0
-						if(i == 0) {
-							if(j<nbEch/3) {
-								prec += (3*max/nbEch);
-								informationEmise.add(prec);
-							}
-							if(j> nbEch/3 && j<nbEch*5/6) {
-								informationEmise.add(max);	
-							}
-							
-							// Si le suivant est un 1 on retourne pas à 0
-							if(bitSuivant) {
-								if(j>nbEch*5/6) {
-									informationEmise.add(max);
-								}
-							}
-							
-							// On descend à 5/6 
-							else {
-								if(j>nbEch*5/6) {
-									prec -= (6*max/nbEch);
-									informationEmise.add(prec);
-								}
-							}
+				if(informationRecue.iemeElement(0)) { // Si l'unique bit est 1
+					for(int i=0; i<nbEch; i++) {
+						if(i<nbEch * 1/3) {
+							prec += (3*max/nbEch);
+							informationEmise.add(prec);
 						}
-						
-						// Si on est entre le premier et dernier bit
-						if(i>0 && i<(informationRecue.nbElements()-1)) {
-							
-							// Si le bit prec est à 1 on reste au max pendant 5/6 de temps
-							if(bitPrec) {
-								if(j<nbEch*5/6) {
-									informationEmise.add(max);
-									prec = max;
-								}
-								
-								// Le prechain est à 1 on reste au max
-								if(bitSuivant) {
-									if(j> nbEch*5/6) {
-										informationEmise.add(max);
-										prec = max;
-									}
-								}
-								
-								//Si le bit suivant est à 0 on descend vers 0
-								if(!bitSuivant) {
-									if(j> nbEch*5/6) {
-										prec -= (6*max/nbEch);
-										informationEmise.add(prec);
-									}
-								}
-							}
-							
-							// Si le bit prec était 0, on monte de 0 à 1/6
-							if(!bitPrec){
-								if(j<nbEch*1/6) {
-									prec += (6*max/nbEch);
-									informationEmise.add(prec);
-								}
-								
-								// De 1/6 à 5/6 on reste au max
-								if(j> nbEch*1/6 && j<nbEch*5/6) {
-									informationEmise.add(max);
-									prec = max;
-								}
-								
-								// Si le bit suivant est à 1 on reste au max
-								if(bitSuivant) {
-									if(j>nbEch*5/6) {
-										informationEmise.add(max);
-										prec = max;
-									}
-								}
-								
-								//Sinon on redescend
-								if(!bitSuivant) {
-									if(j> nbEch*5/6) {
-										prec -= (6*max/nbEch);
-										informationEmise.add(prec);
-									}
-								}
-								
-							}
+						if(i>nbEch * 1/3 && i<nbEch*2/3) {
+							prec = max;
+							informationEmise.add(max);
 						}
-						if(i == (informationRecue.nbElements()-1) ) { // Le dernier bit
-							if(!bitPrec) { // Si le bit prec est 0
-								if(j<nbEch*1/6) { // On remonte de 0 à 1/6
-									prec += (6*max/nbEch);
-									informationEmise.add(prec);
-								}
-								if(j>nbEch*1/6 && j<nbEch * 2/3) { // On reste au max jusqu'à 2/3
-									informationEmise.add(max);
-									prec = max;
-								}
-								if(j>nbEch * 2/3) { // On descend de 2/3 à 1
-									prec -= (3*max/nbEch);
-									informationEmise.add(prec);
-								}
-							}
-							if(bitPrec) { // Si le bit prec est 1
-								if(j<nbEch * 2/3) { // On reste au max de 0 à 2/3
-									informationEmise.add(max);
-									prec = max;
-								}
-								if(j>nbEch * 2/3) { // de 2/3 à 0 on descend 
-									 prec -= (3*max/nbEch);
-									 informationEmise.add(prec);
-								}
-								
-							}
-						}
-					}
-					else { // Sinon le bit est 0
-
-						// Si premier bit on le démarre de 0
-						if(i == 0) {
-							if(j<nbEch/3) {
-								prec -= Math.abs(3*min/nbEch);
-								informationEmise.add(prec);
-							}
-							if(j> nbEch/3 && j<nbEch*5/6) {
-								informationEmise.add(min);	
-							}
-							
-							// Si le suivant est un 0 on retourne pas à 0
-							if(!bitSuivant) {
-								if(j>nbEch*5/6) {
-									informationEmise.add(min);
-								}
-							}
-							
-							// On remonte à 5/6 
-							else {
-								if(j>nbEch*5/6) {
-									prec += Math.abs(6*min/nbEch);
-									informationEmise.add(prec);
-								}
-							}
-						}
-						
-						// Si on est entre le premier et dernier bit
-						if(i>0 && i<(informationRecue.nbElements()-1)) {
-							
-							// Si le bit prec est à 0 on reste au min pendant 5/6 de temps
-							if(!bitPrec) {
-								if(j<nbEch*5/6) {
-									informationEmise.add(min);
-									prec = min;
-								}
-								
-								// Le prechain est à 0 on reste au min
-								if(!bitSuivant) {
-									if(j>= nbEch*5/6) {
-										informationEmise.add(min);
-										prec = min;
-									}
-								}
-								
-								//Si le bit suivant est à 1 on remonte vers 0
-								if(bitSuivant) {
-									if(j> nbEch*5/6) {
-										prec += Math.abs(6*min/nbEch);
-										informationEmise.add(prec);
-									}
-								}
-							}
-							
-							// Si le bit prec était 1, on monte de 0 à 1/6
-							if(bitPrec){
-								if(j<nbEch*1/6) {
-									prec -= Math.abs(6*min/nbEch);
-									informationEmise.add(prec);
-								}
-								
-								// De 1/6 à 5/6 on reste au min
-								if(j> nbEch*1/6 && j<nbEch*5/6) {
-									informationEmise.add(min);
-									prec = min;
-								}
-								
-								// Si le bit suivant est à 0 on reste au max
-								if(!bitSuivant) {
-									if(j>nbEch*5/6) {
-										informationEmise.add(min);
-										prec = min;
-									}
-								}
-								
-								//Sinon on remonte
-								if(bitSuivant) {
-									if(j> nbEch*5/6) {
-										prec += Math.abs(6*min/nbEch);
-										informationEmise.add(prec);
-									}
-								}
-								
-							}
-						}
-						if(i == (informationRecue.nbElements()-1) ) { // Le dernier bit
-							if(bitPrec) { // Si le bit prec est 1
-								if(j<nbEch*1/6) { // On descend de 0 à 1/6
-									prec -= Math.abs(6*min/nbEch);
-									informationEmise.add(prec);
-								}
-								if(j>nbEch*1/6 && j<nbEch * 2/3) { // On reste au min jusqu'à 2/3
-									informationEmise.add(min);
-									prec = min;
-								}
-								if(j>nbEch * 2/3) { // On remonte de 2/3 à 1
-									prec += Math.abs(3*min/nbEch);
-									informationEmise.add(prec);
-								}
-							}
-							if(!bitPrec) { // Si le bit prec est 0
-								if(j<nbEch * 2/3) { // On reste au min de 0 à 2/3
-									informationEmise.add(min);
-									prec = min;
-								}
-								if(j>nbEch * 2/3) { // de 2/3 à 0 on remonte 
-									 prec += Math.abs(3*min/nbEch);
-									 informationEmise.add(prec);
-								}
-								
-							}
+						if(i> nbEch * 2/3) {
+							prec -= (3*max/nbEch);
+							informationEmise.add(prec);
 						}
 					}
 				}
-				bitPrec = b;
+				else // Sinon l'unique bit est à 0
+				{
+					for(int i=0; i<nbEch; i++) {
+						if(i<nbEch * 1/3) {
+							prec += (3*min/nbEch);
+							informationEmise.add(prec);
+						}
+						if(i>nbEch * 1/3 && i<nbEch*2/3) {
+							prec = min;
+							informationEmise.add(min);
+						}
+						if(i> nbEch * 2/3) {
+							prec -= (3*min/nbEch);
+							informationEmise.add(prec);
+						}
+					}
+				}
+			}
+			else {
+
+				// Prend le bit precedent et suivant (si le nombres de bits est supérieur à 1
+				
+				boolean bitPrec = informationRecue.iemeElement(0);
+				boolean bitSuivant = informationRecue.iemeElement(1);
+				
+				for(int i=0; i<informationRecue.nbElements(); i++) {
+					boolean b = informationRecue.iemeElement(i);
+					
+					if(i<(informationRecue.nbElements()-1)) {
+						bitSuivant = informationRecue.iemeElement(i+1);
+					}
+					
+					float prec = 0.0f;
+					
+					for(int j=0;j<nbEch; j++) {
+						
+						if(b) { // Si le bit est 1
+							
+							// Si premier bit on le démarre de 0
+							if(i == 0) {
+								if(j<nbEch/3) {
+									prec += (3*max/nbEch);
+									informationEmise.add(prec);
+								}
+								if(j> nbEch/3 && j<nbEch*5/6) {
+									informationEmise.add(max);	
+								}
+								
+								// Si le suivant est un 1 on retourne pas à 0
+								if(bitSuivant) {
+									if(j>nbEch*5/6) {
+										informationEmise.add(max);
+									}
+								}
+								
+								// On descend à 5/6 
+								else {
+									if(j>nbEch*5/6) {
+										prec -= (6*max/nbEch);
+										informationEmise.add(prec);
+									}
+								}
+							}
+							
+							// Si on est entre le premier et dernier bit
+							if(i>0 && i<(informationRecue.nbElements()-1)) {
+								
+								// Si le bit prec est à 1 on reste au max pendant 5/6 de temps
+								if(bitPrec) {
+									if(j<nbEch*5/6) {
+										informationEmise.add(max);
+										prec = max;
+									}
+									
+									// Le prechain est à 1 on reste au max
+									if(bitSuivant) {
+										if(j> nbEch*5/6) {
+											informationEmise.add(max);
+											prec = max;
+										}
+									}
+									
+									//Si le bit suivant est à 0 on descend vers 0
+									if(!bitSuivant) {
+										if(j> nbEch*5/6) {
+											prec -= (6*max/nbEch);
+											informationEmise.add(prec);
+										}
+									}
+								}
+								
+								// Si le bit prec était 0, on monte de 0 à 1/6
+								if(!bitPrec){
+									if(j<nbEch*1/6) {
+										prec += (6*max/nbEch);
+										informationEmise.add(prec);
+									}
+									
+									// De 1/6 à 5/6 on reste au max
+									if(j> nbEch*1/6 && j<nbEch*5/6) {
+										informationEmise.add(max);
+										prec = max;
+									}
+									
+									// Si le bit suivant est à 1 on reste au max
+									if(bitSuivant) {
+										if(j>nbEch*5/6) {
+											informationEmise.add(max);
+											prec = max;
+										}
+									}
+									
+									//Sinon on redescend
+									if(!bitSuivant) {
+										if(j> nbEch*5/6) {
+											prec -= (6*max/nbEch);
+											informationEmise.add(prec);
+										}
+									}
+									
+								}
+							}
+							if(i == (informationRecue.nbElements()-1) ) { // Le dernier bit
+								if(!bitPrec) { // Si le bit prec est 0
+									if(j<nbEch*1/6) { // On remonte de 0 à 1/6
+										prec += (6*max/nbEch);
+										informationEmise.add(prec);
+									}
+									if(j>nbEch*1/6 && j<nbEch * 2/3) { // On reste au max jusqu'à 2/3
+										informationEmise.add(max);
+										prec = max;
+									}
+									if(j>nbEch * 2/3) { // On descend de 2/3 à 1
+										prec -= (3*max/nbEch);
+										informationEmise.add(prec);
+									}
+								}
+								if(bitPrec) { // Si le bit prec est 1
+									if(j<nbEch * 2/3) { // On reste au max de 0 à 2/3
+										informationEmise.add(max);
+										prec = max;
+									}
+									if(j>nbEch * 2/3) { // de 2/3 à 0 on descend 
+										 prec -= (3*max/nbEch);
+										 informationEmise.add(prec);
+									}
+									
+								}
+							}
+						}
+						else { // Sinon le bit est 0
+	
+							// Si premier bit on le démarre de 0
+							if(i == 0) {
+								if(j<nbEch/3) {
+									prec -= Math.abs(3*min/nbEch);
+									informationEmise.add(prec);
+								}
+								if(j> nbEch/3 && j<nbEch*5/6) {
+									informationEmise.add(min);	
+								}
+								
+								// Si le suivant est un 0 on retourne pas à 0
+								if(!bitSuivant) {
+									if(j>nbEch*5/6) {
+										informationEmise.add(min);
+									}
+								}
+								
+								// On remonte à 5/6 
+								else {
+									if(j>nbEch*5/6) {
+										prec += Math.abs(6*min/nbEch);
+										informationEmise.add(prec);
+									}
+								}
+							}
+							
+							// Si on est entre le premier et dernier bit
+							if(i>0 && i<(informationRecue.nbElements()-1)) {
+								
+								// Si le bit prec est à 0 on reste au min pendant 5/6 de temps
+								if(!bitPrec) {
+									if(j<nbEch*5/6) {
+										informationEmise.add(min);
+										prec = min;
+									}
+									
+									// Le prechain est à 0 on reste au min
+									if(!bitSuivant) {
+										if(j>= nbEch*5/6) {
+											informationEmise.add(min);
+											prec = min;
+										}
+									}
+									
+									//Si le bit suivant est à 1 on remonte vers 0
+									if(bitSuivant) {
+										if(j> nbEch*5/6) {
+											prec += Math.abs(6*min/nbEch);
+											informationEmise.add(prec);
+										}
+									}
+								}
+								
+								// Si le bit prec était 1, on monte de 0 à 1/6
+								if(bitPrec){
+									if(j<nbEch*1/6) {
+										prec -= Math.abs(6*min/nbEch);
+										informationEmise.add(prec);
+									}
+									
+									// De 1/6 à 5/6 on reste au min
+									if(j> nbEch*1/6 && j<nbEch*5/6) {
+										informationEmise.add(min);
+										prec = min;
+									}
+									
+									// Si le bit suivant est à 0 on reste au max
+									if(!bitSuivant) {
+										if(j>nbEch*5/6) {
+											informationEmise.add(min);
+											prec = min;
+										}
+									}
+									
+									//Sinon on remonte
+									if(bitSuivant) {
+										if(j> nbEch*5/6) {
+											prec += Math.abs(6*min/nbEch);
+											informationEmise.add(prec);
+										}
+									}
+									
+								}
+							}
+							if(i == (informationRecue.nbElements()-1) ) { // Le dernier bit
+								if(bitPrec) { // Si le bit prec est 1
+									if(j<nbEch*1/6) { // On descend de 0 à 1/6
+										prec -= Math.abs(6*min/nbEch);
+										informationEmise.add(prec);
+									}
+									if(j>nbEch*1/6 && j<nbEch * 2/3) { // On reste au min jusqu'à 2/3
+										informationEmise.add(min);
+										prec = min;
+									}
+									if(j>nbEch * 2/3) { // On remonte de 2/3 à 1
+										prec += Math.abs(3*min/nbEch);
+										informationEmise.add(prec);
+									}
+								}
+								if(!bitPrec) { // Si le bit prec est 0
+									if(j<nbEch * 2/3) { // On reste au min de 0 à 2/3
+										informationEmise.add(min);
+										prec = min;
+									}
+									if(j>nbEch * 2/3) { // de 2/3 à 0 on remonte 
+										 prec += Math.abs(3*min/nbEch);
+										 informationEmise.add(prec);
+									}
+									
+								}
+							}
+						}
+					}
+					bitPrec = b;
+				}
 			}
 		}
 		else if(forme.equalsIgnoreCase("RZ")) {
