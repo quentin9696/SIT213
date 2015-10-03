@@ -7,39 +7,62 @@ import java.lang.Math;
 import destinations.*;
 
 /**
- * Classe d'un transmetteur parfait. Celui se contente de recevoir un message et le transmet à un tous les destinataire qui lui sont rattaché
+ * Classe d'un emetteur parfait boolean vers float. Celui recois les informations binaire et les rend analogique par différents codage (NRZ, NRZT, RZ)
 */
 
 public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 
-	/**
-	 * Méthode permettant de revevoir une information  et le stocker dans l'attribut informationRecue
-	 * @param information : L'information (de type boolean) recue de la source
-	 * @throws InformationNonConforme : L'information n'est pas conforme (exemple : information null)
-	 *
-	*/
 	
+	/** Amplitude minimun pour l'echentillonage */
 	private float min;
+	/** Amplitude max pour l'echentillonage */
 	private float max;
+	/** type de codage */
 	private String forme;
+	/** Nombre d'enchentillons par symbole */
 	private int nbEch;
 	
 	/**
-	 * Constructeur
-	 * @param min 
-	 * @param max
-	 * @param forme
-	 * @param nbEch
+	 * Constructeur qui initialise un Emetteur parfait
+	 * @param min amplitude min du signal analagique généré
+	 * @param max amplitude max du signal analagique généré
+	 * @param forme type de codage du signal analogique (NRZ, NRZT ou RZ)
+	 * @param nbEch nombre d'echentillon par symbole
+	 * @throws Un des paramètres n'est pas conforme
 	 */
 	
-	public EmetteurAnalogique(float min, float max, String forme, int nbEch) {
+	public EmetteurAnalogique(float min, float max, String forme, int nbEch) throws EmetteurNonConforme {
 		super();
+		
+		if(min > max) {
+			throw new EmetteurNonConforme("Amplitude min ne peut pas être supérieur à l'amplitude max");
+		}
+		
+		if(forme==null) {
+			throw new EmetteurNonConforme("La forme doit être spécifiée");
+		}
+		
+		if(nbEch < 1) {
+			throw new EmetteurNonConforme("Le nombre d'enchentillon doit être positif non nul");
+		}
+		
+		// Si la forme ne match pas un de ce paramètres 
+		if(!(forme.equalsIgnoreCase("NRZ") || forme.equalsIgnoreCase("NRZT") || forme.equalsIgnoreCase("RZ"))) {
+			throw new EmetteurNonConforme("Le codage doit être NRZ, RZ ou NRZT");
+		}
 		
 		this.min = min;
 		this.max = max;
 		this.forme = forme;
 		this.nbEch = nbEch;
 	}
+	
+	/**
+	 * Méthode qui recois une information binaire, et la rend analogique en fonction des paramètre du constructeur
+	 * @param information : L'information (de type boolean) recue de la source
+	 * @throws InformationNonConforme : L'information n'est pas conforme (exemple : information null)
+	 *
+	*/
 	
 	@Override
 	public void recevoir(Information<Boolean> information) throws InformationNonConforme {
@@ -65,36 +88,255 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 			}
 		}
 		else if(forme.equalsIgnoreCase("NRZT")) {
-			for(Boolean b : informationRecue) {
+			
+			// Prend le bit precedent et suivant
+			boolean bitPrec = informationRecue.iemeElement(0);
+			boolean bitSuivant = informationRecue.iemeElement(1);
+			
+			// Petite excepetion pour le premier bit 
+			
+			
+			for(int i=0; i<informationRecue.nbElements(); i++) {
+				boolean b = informationRecue.iemeElement(i);
+				
+				if(i<(informationRecue.nbElements()-1)) {
+					bitSuivant = informationRecue.iemeElement(i+1);
+				}
+				
 				float prec = 0.0f; 
-				for(int i=0;i<nbEch; i++) {
+				
+				for(int j=0;j<nbEch; j++) {
+					
 					if(b) { // Si le bit est 1
-						if(i<nbEch/3) {
-							prec += (3*max/nbEch);
-							informationEmise.add(prec);
+						
+						// Si premier bit on le démarre de 0
+						if(i == 0) {
+							if(j<nbEch/3) {
+								prec += (3*max/nbEch);
+								informationEmise.add(prec);
+							}
+							if(j> nbEch/3 && j<nbEch*5/6) {
+								informationEmise.add(max);	
+							}
+							
+							// Si le suivant est un 1 on retourne pas à 0
+							if(bitSuivant) {
+								if(j>nbEch*5/6) {
+									informationEmise.add(max);
+								}
+							}
+							
+							// On descend à 5/6 
+							else {
+								if(j>nbEch*5/6) {
+									prec -= (6*max/nbEch);
+									informationEmise.add(prec);
+								}
+							}
 						}
-						if(i>= nbEch/3 && i<nbEch*2/3) {
-							informationEmise.add(max);	
+						
+						// Si on est entre le premier et dernier bit
+						if(i>0 && i<(informationRecue.nbElements()-1)) {
+							
+							// Si le bit prec est à 1 on reste au max pendant 5/6 de temps
+							if(bitPrec) {
+								if(j<nbEch*5/6) {
+									informationEmise.add(max);
+									prec = max;
+								}
+								
+								// Le prechain est à 1 on reste au max
+								if(bitSuivant) {
+									if(j> nbEch*5/6) {
+										informationEmise.add(max);
+										prec = max;
+									}
+								}
+								
+								//Si le bit suivant est à 0 on descend vers 0
+								if(!bitSuivant) {
+									if(j> nbEch*5/6) {
+										prec -= (6*max/nbEch);
+										informationEmise.add(prec);
+									}
+								}
+							}
+							
+							// Si le bit prec était 0, on monte de 0 à 1/6
+							if(!bitPrec){
+								if(j<nbEch*1/6) {
+									prec += (6*max/nbEch);
+									informationEmise.add(prec);
+								}
+								
+								// De 1/6 à 5/6 on reste au max
+								if(j> nbEch*1/6 && j<nbEch*5/6) {
+									informationEmise.add(max);
+									prec = max;
+								}
+								
+								// Si le bit suivant est à 1 on reste au max
+								if(bitSuivant) {
+									if(j>nbEch*5/6) {
+										informationEmise.add(max);
+										prec = max;
+									}
+								}
+								
+								//Sinon on redescend
+								if(!bitSuivant) {
+									if(j> nbEch*5/6) {
+										prec -= (6*max/nbEch);
+										informationEmise.add(prec);
+									}
+								}
+								
+							}
 						}
-						if(i>=nbEch*2/3) {
-							prec -= (3*max/nbEch);
-							informationEmise.add(prec);
+						if(i == (informationRecue.nbElements()-1) ) { // Le dernier bit
+							if(!bitPrec) { // Si le bit prec est 0
+								if(j<nbEch*1/6) { // On remonte de 0 à 1/6
+									prec += (6*max/nbEch);
+									informationEmise.add(prec);
+								}
+								if(j>nbEch*1/6 && j<nbEch * 2/3) { // On reste au max jusqu'à 2/3
+									informationEmise.add(max);
+									prec = max;
+								}
+								if(j>nbEch * 2/3) { // On descend de 2/3 à 1
+									prec -= (3*max/nbEch);
+									informationEmise.add(prec);
+								}
+							}
+							if(bitPrec) { // Si le bit prec est 1
+								if(j<nbEch * 2/3) { // On reste au max de 0 à 2/3
+									informationEmise.add(max);
+									prec = max;
+								}
+								if(j>nbEch * 2/3) { // de 2/3 à 0 on descend 
+									 prec -= (3*max/nbEch);
+									 informationEmise.add(prec);
+								}
+								
+							}
 						}
 					}
 					else { // Sinon le bit est 0
-						if(i<nbEch/3) {
-							prec -= Math.abs(3*min/nbEch);
-							informationEmise.add(prec);
+
+						// Si premier bit on le démarre de 0
+						if(i == 0) {
+							if(j<nbEch/3) {
+								prec -= Math.abs(3*min/nbEch);
+								informationEmise.add(prec);
+							}
+							if(j> nbEch/3 && j<nbEch*5/6) {
+								informationEmise.add(min);	
+							}
+							
+							// Si le suivant est un 0 on retourne pas à 0
+							if(!bitSuivant) {
+								if(j>nbEch*5/6) {
+									informationEmise.add(min);
+								}
+							}
+							
+							// On remonte à 5/6 
+							else {
+								if(j>nbEch*5/6) {
+									prec += Math.abs(6*min/nbEch);
+									informationEmise.add(prec);
+								}
+							}
 						}
-						if(i>= nbEch/3 && i<nbEch*2/3) {
-							informationEmise.add(min);
+						
+						// Si on est entre le premier et dernier bit
+						if(i>0 && i<(informationRecue.nbElements()-1)) {
+							
+							// Si le bit prec est à 0 on reste au min pendant 5/6 de temps
+							if(!bitPrec) {
+								if(j<nbEch*5/6) {
+									informationEmise.add(min);
+									prec = min;
+								}
+								
+								// Le prechain est à 0 on reste au min
+								if(!bitSuivant) {
+									if(j>= nbEch*5/6) {
+										informationEmise.add(min);
+										prec = min;
+									}
+								}
+								
+								//Si le bit suivant est à 1 on remonte vers 0
+								if(bitSuivant) {
+									if(j> nbEch*5/6) {
+										prec += Math.abs(6*min/nbEch);
+										informationEmise.add(prec);
+									}
+								}
+							}
+							
+							// Si le bit prec était 1, on monte de 0 à 1/6
+							if(bitPrec){
+								if(j<nbEch*1/6) {
+									prec -= Math.abs(6*min/nbEch);
+									informationEmise.add(prec);
+								}
+								
+								// De 1/6 à 5/6 on reste au min
+								if(j> nbEch*1/6 && j<nbEch*5/6) {
+									informationEmise.add(min);
+									prec = min;
+								}
+								
+								// Si le bit suivant est à 0 on reste au max
+								if(!bitSuivant) {
+									if(j>nbEch*5/6) {
+										informationEmise.add(min);
+										prec = min;
+									}
+								}
+								
+								//Sinon on remonte
+								if(bitSuivant) {
+									if(j> nbEch*5/6) {
+										prec += Math.abs(6*min/nbEch);
+										informationEmise.add(prec);
+									}
+								}
+								
+							}
 						}
-						if(i>=nbEch*2/3) {
-							prec += Math.abs(3*min/nbEch);
-							informationEmise.add(prec);
+						if(i == (informationRecue.nbElements()-1) ) { // Le dernier bit
+							if(bitPrec) { // Si le bit prec est 1
+								if(j<nbEch*1/6) { // On descend de 0 à 1/6
+									prec -= Math.abs(6*min/nbEch);
+									informationEmise.add(prec);
+								}
+								if(j>nbEch*1/6 && j<nbEch * 2/3) { // On reste au min jusqu'à 2/3
+									informationEmise.add(min);
+									prec = min;
+								}
+								if(j>nbEch * 2/3) { // On remonte de 2/3 à 1
+									prec += Math.abs(3*min/nbEch);
+									informationEmise.add(prec);
+								}
+							}
+							if(!bitPrec) { // Si le bit prec est 0
+								if(j<nbEch * 2/3) { // On reste au min de 0 à 2/3
+									informationEmise.add(min);
+									prec = min;
+								}
+								if(j>nbEch * 2/3) { // de 2/3 à 0 on remonte 
+									 prec += Math.abs(3*min/nbEch);
+									 informationEmise.add(prec);
+								}
+								
+							}
 						}
 					}
 				}
+				bitPrec = b;
 			}
 		}
 		else if(forme.equalsIgnoreCase("RZ")) {
@@ -144,7 +386,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 	}
 	
 	/**
-         * Méthode permettant d'émettre l'information recue sans la modifier
+         * Méthode permettant d'émettre l'information analogique généré sans la modifier
          * @throws InformationNonConforme : L'information n'est pas conforme
          *
         */

@@ -71,19 +71,14 @@ import java.io.PrintWriter;
    * @param args le tableau des diffÃ©rents arguments.
    *
    * @throws ArgumentsException si un des arguments est incorrect
+   * @throws EmetteurNonConforme l'emetteur n'est pas correct  
    *
    */   
-      public  Simulateur(String [] args) throws ArgumentsException {
+      public  Simulateur(String [] args) throws ArgumentsException, EmetteurNonConforme {
       
       	// analyser et rÃ©cupÃ©rer les arguments
       	
          analyseArguments(args);
-         
-	/*System.out.println("Message aléatoire " + messageAleatoire);
-	System.out.println("Message aléatoire avec germe : " + aleatoireAvecGerme);
-	System.out.println("Nb bits : " + nbBitsMess);
-	System.out.println("Seed : " + seed);
-	System.out.println("Message fixe : " + messageString);*/
 
         // Message pas aléatoire (-m avec suite logique) 
          if(!messageAleatoire) {
