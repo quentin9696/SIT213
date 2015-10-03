@@ -74,7 +74,7 @@ import java.io.PrintWriter;
    * @throws EmetteurNonConforme l'emetteur n'est pas correct  
    *
    */   
-      public  Simulateur(String [] args) throws ArgumentsException, EmetteurNonConforme {
+      public  Simulateur(String [] args) throws ArgumentsException, EmetteurNonConforme, RecepteurNonConforme {
       
       	// analyser et rÃ©cupÃ©rer les arguments
       	

@@ -137,8 +137,17 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 				float prec; 
 				float moyenne = (max+min)/2;
 				float moyenneAbs = Math.abs(moyenne);
-				float coefMax = Math.abs(max) - moyenneAbs;
+				
+				float coefMax = (Math.abs(max) - moyenneAbs);
 				float coefMin = (moyenneAbs - Math.abs(min)) * -1;
+				
+				if(max < 0) {
+					coefMax *= -1;
+				}
+				
+				if(min > 0) {
+					coefMin *= -1;
+				}
 				
 				for(int i=0; i<informationRecue.nbElements(); i++) {
 					boolean b = informationRecue.iemeElement(i);
@@ -253,21 +262,16 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 										informationEmise.add(max);
 										prec = max;
 									}
-									if(j>nbEch * 2/3) { // On descend de 2/3 à 1
-										prec -= 3*max/nbEch;
-										informationEmise.add(prec);
-									}
 								}
 								if(bitPrec) { // Si le bit prec est 1
 									if(j<nbEch * 2/3) { // On reste au max de 0 à 2/3
 										informationEmise.add(max);
 										prec = max;
 									}
-									if(j>nbEch * 2/3) { // de 2/3 à 0 on descend 
-										prec -= 3*max/nbEch;
-										 informationEmise.add(prec);
-									}
-									
+								}
+								if(j>nbEch * 2/3) { // On descend de 2/3 à 1
+									prec -= 3*max/nbEch;
+									informationEmise.add(prec);
 								}
 							}
 						}
@@ -277,10 +281,10 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 							if(i == 0) {
 								if(j<nbEch/3) {
 									if(min > 0) {
-										prec += 3*coefMin/nbEch;
+										prec += 3*Math.abs(min)/nbEch;
 									}
 									else {
-										prec -= 3*coefMin/nbEch;
+										prec -= 3*Math.abs(min)/nbEch;
 									}
 									
 									informationEmise.add(prec);
@@ -385,10 +389,10 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 								
 								if(j>nbEch * 2/3) { // de 2/3 à 1 on remonte 
 									if(min > 0) {
-										prec -= 3*coefMin/nbEch;
+										prec -= 3*Math.abs(min)/nbEch;
 									}
 									else {
-										prec += 3*coefMin/nbEch;
+										prec += 3*Math.abs(min)/nbEch;
 									}
 									informationEmise.add(prec);
 								}
