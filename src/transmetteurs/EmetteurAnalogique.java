@@ -66,22 +66,34 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 		}
 		else if(forme.equalsIgnoreCase("NRZT")) {
 			for(Boolean b : informationRecue) {
+				float prec = 0.0f; 
 				for(int i=0;i<nbEch; i++) {
-					/*if(b) {
-						if() {
-							
+					if(b) { // Si le bit est 1
+						if(i<nbEch/3) {
+							prec += (3*max/nbEch);
+							informationEmise.add(prec);
 						}
-						else if() {
-							
+						if(i>= nbEch/3 && i<nbEch*2/3) {
+							informationEmise.add(max);	
 						}
-						else {
-							informationEmise.add(max);
+						if(i>=nbEch*2/3) {
+							prec -= (3*max/nbEch);
+							informationEmise.add(prec);
 						}
-						
 					}
-					else {
-						informationEmise.add(min);
-					}*/
+					else { // Sinon le bit est 0
+						if(i<nbEch/3) {
+							prec -= Math.abs(3*min/nbEch);
+							informationEmise.add(prec);
+						}
+						if(i>= nbEch/3 && i<nbEch*2/3) {
+							informationEmise.add(min);
+						}
+						if(i>=nbEch*2/3) {
+							prec += Math.abs(3*min/nbEch);
+							informationEmise.add(prec);
+						}
+					}
 				}
 			}
 		}
