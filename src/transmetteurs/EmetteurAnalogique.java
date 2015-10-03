@@ -137,9 +137,15 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 				float prec; 
 				float moyenne = (max+min)/2;
 				float moyenneAbs = Math.abs(moyenne);
+				System.out.println("Min : "  + max);
+				System.out.println("Max : "  + min);
 				
-				float coefMax = (Math.abs(max) - moyenneAbs);
-				float coefMin = (moyenneAbs - Math.abs(min)) * -1;
+				System.out.println("Moyenne : "  + moyenne);
+				
+				float coefMax = Math.abs(max) - moyenne;
+				float coefMin = (moyenneAbs - Math.abs(min)) * -1;			
+				System.out.println("CoefMax : "  + coefMax);
+				System.out.println("CoefMin : "  + coefMin);
 				
 				if(max < 0) {
 					coefMax *= -1;
