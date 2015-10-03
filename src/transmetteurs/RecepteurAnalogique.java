@@ -80,8 +80,18 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 		int j = 0;
 		float somme = 0;
 		if (forme.equalsIgnoreCase("RZ")) {
+			System.out.println("nb bits : " + informationRecue.nbElements()/nbEch);
 			for (float echantillon : informationRecue) {
+				j++;
+				
+				if ((j - 1)> 5 * nbEch / 12 && (j-1) < 7 * nbEch / 12) {
+					somme += echantillon;
+				}
+				
+				
 				if (j == nbEch) {
+					//System.out.println("Somme : " + somme + "nb elts" + informationRecue.nbElements() + "");
+
 					if (somme / (-1 + nbEch / 6) > 0.95 * max) // max sur
 																	// les
 																	// échantillons
@@ -99,12 +109,12 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 					somme = 0;
 
 				}
-				if (j > 5 * nbEch / 12 && j < 7 * nbEch / 12) {
-					somme += echantillon;
-				}
-				j++;
+				
 			}
-		} else if (forme.equalsIgnoreCase("NRZT")) {
+		} 
+		else if (forme.equalsIgnoreCase("NRZT")) {
+			System.out.println("nb bits : " + informationRecue.nbElements()/nbEch);
+
 			if (informationRecue.nbElements() <= nbEch) {
 				for (float echantillon : informationRecue) {
 					somme += echantillon;
@@ -116,7 +126,19 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 			} else {
 				boolean first = true;
 				for (float echantillon : informationRecue) {
+j++;
 
+
+					if (first) {
+						if (j > nbEch / 3 && j < 5 * nbEch / 6) {
+							somme += echantillon;
+						}
+						//first = false;
+					} 
+					else if (j > nbEch / 6 && j < 5 * nbEch / 6) {
+						somme += echantillon;
+					}
+					
 					if (j == nbEch) {
 						if (first) {
 							if (somme > 0.95 * (nbEch / 2 - 1) * max) {
@@ -133,22 +155,15 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 						j = 0;
 						somme = 0;
 					}
-
-					if (first) {
-						if (j > nbEch / 3 && j < 5 * nbEch / 6) {
-							somme += echantillon;
-						}
-						first = false;
-					} else if (j > nbEch / 6 && j < 5 * nbEch / 6) {
-						somme += echantillon;
-					}
-					j++;
 				}
 			}
 
 		} else if (forme.equalsIgnoreCase("NRZ")) {
+			System.out.println("nb bits : " + informationRecue.nbElements()/nbEch);
 			for (float echantillon : informationRecue) {
-				if (j == nbEch) {
+				j++;
+				somme += echantillon;
+				if (j == nbEch ) {
 					if (somme / nbEch > 0.95 * max) {
 						informationEmise.add(true);
 					} else {
@@ -157,8 +172,7 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 					j = 0;
 					somme = 0;
 				}
-				j++;
-				somme += echantillon;
+				
 			}
 
 		}
