@@ -178,14 +178,14 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 									prec += (3*max/nbEch);
 									informationEmise.add(prec);
 								}
-								if(j> nbEch/3 && j<nbEch*5/6) {
+								if(j>= nbEch/3 && j<nbEch*5/6) {
 									informationEmise.add(max);	
 									prec = max;
 								}
 								
 								// Si le suivant est un 1 on retourne pas à 0
 								if(bitSuivant) {
-									if(j>nbEch*5/6) {
+									if(j>=nbEch*5/6) {
 										informationEmise.add(max);
 										prec = max;
 									}
@@ -193,7 +193,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 								
 								// On descend à 5/6 
 								else {
-									if(j>nbEch*5/6) {
+									if(j>=nbEch*5/6) {
 										prec -= (6*coefMax/nbEch);
 										informationEmise.add(prec);
 									}
@@ -212,7 +212,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 									
 									// Le prechain est à 1 on reste au max
 									if(bitSuivant) {
-										if(j> nbEch*5/6) {
+										if(j>= nbEch*5/6) {
 											informationEmise.add(max);
 											prec = max;
 										}
@@ -220,7 +220,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 									
 									//Si le bit suivant est à 0 on descend vers 0
 									if(!bitSuivant) {
-										if(j> nbEch*5/6) {
+										if(j>= nbEch*5/6) {
 											prec -= (6*coefMax/nbEch);
 											informationEmise.add(prec);
 										}
@@ -235,14 +235,14 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 									}
 									
 									// De 1/6 à 5/6 on reste au max
-									if(j> nbEch*1/6 && j<nbEch*5/6) {
+									if(j>= nbEch*1/6 && j<nbEch*5/6) {
 										informationEmise.add(max);
 										prec = max;
 									}
 									
 									// Si le bit suivant est à 1 on reste au max
 									if(bitSuivant) {
-										if(j>nbEch*5/6) {
+										if(j>=nbEch*5/6) {
 											informationEmise.add(max);
 											prec = max;
 										}
@@ -250,7 +250,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 									
 									//Sinon on redescend
 									if(!bitSuivant) {
-										if(j> nbEch*5/6) {
+										if(j>= nbEch*5/6) {
 											prec -= 6*coefMax/nbEch;
 											informationEmise.add(prec);
 										}
@@ -264,7 +264,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 										prec += 6*coefMax/nbEch;
 										informationEmise.add(prec);
 									}
-									if(j>nbEch*1/6 && j<nbEch * 2/3) { // On reste au max jusqu'à 2/3
+									if(j>=nbEch*1/6 && j<nbEch * 2/3) { // On reste au max jusqu'à 2/3
 										informationEmise.add(max);
 										prec = max;
 									}
@@ -275,7 +275,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 										prec = max;
 									}
 								}
-								if(j>nbEch * 2/3) { // On descend de 2/3 à 1
+								if(j>=nbEch * 2/3) { // On descend de 2/3 à 1
 									prec -= 3*max/nbEch;
 									informationEmise.add(prec);
 								}
@@ -295,14 +295,14 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 									
 									informationEmise.add(prec);
 								}
-								if(j> nbEch/3 && j<nbEch*5/6) {
+								if(j>= nbEch/3 && j<nbEch*5/6) {
 									informationEmise.add(min);
 									prec = min;
 								}
 								
 								// Si le suivant est un 0 on retourne pas à 0
 								if(!bitSuivant) {
-									if(j>nbEch*5/6) {
+									if(j>=nbEch*5/6) {
 										informationEmise.add(min);
 										prec = min;
 									}
@@ -310,7 +310,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 								
 								// On remonte à 5/6 
 								else {
-									if(j>nbEch*5/6) {
+									if(j>=nbEch*5/6) {
 										prec += 6*coefMin/nbEch;
 										informationEmise.add(prec);
 									}
@@ -337,7 +337,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 									
 									//Si le bit suivant est à 1 on remonte vers 0
 									if(bitSuivant) {
-										if(j> nbEch*5/6) {
+										if(j>= nbEch*5/6) {
 											prec += 6*coefMin/nbEch;
 											informationEmise.add(prec);
 										}
@@ -352,14 +352,14 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 									}
 									
 									// De 1/6 à 5/6 on reste au min
-									if(j> nbEch*1/6 && j<nbEch*5/6) {
+									if(j>= nbEch*1/6 && j<nbEch*5/6) {
 										informationEmise.add(min);
 										prec = min;
 									}
 									
 									// Si le bit suivant est à 0 on reste au max
 									if(!bitSuivant) {
-										if(j>nbEch*5/6) {
+										if(j>=nbEch*5/6) {
 											informationEmise.add(min);
 											prec = min;
 										}
@@ -367,7 +367,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 									
 									//Sinon on remonte
 									if(bitSuivant) {
-										if(j> nbEch*5/6) {
+										if(j>= nbEch*5/6) {
 											prec += 6*coefMin/nbEch;
 											informationEmise.add(prec);
 										}
@@ -381,7 +381,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 										prec -= 6*coefMin/nbEch;
 										informationEmise.add(prec);
 									}
-									if(j>nbEch*1/6 && j<nbEch * 2/3) { // On reste au min jusqu'à 2/3
+									if(j>=nbEch*1/6 && j<nbEch * 2/3) { // On reste au min jusqu'à 2/3
 										informationEmise.add(min);
 										prec = min;
 									}
@@ -393,7 +393,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 									}	
 								}
 								
-								if(j>nbEch * 2/3) { // de 2/3 à 1 on remonte 
+								if(j>=nbEch * 2/3) { // de 2/3 à 1 on remonte 
 									if(min > 0) {
 										prec -= 3*Math.abs(min)/nbEch;
 									}
@@ -407,6 +407,9 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 					}
 					bitPrec = b;
 				}
+				
+				System.out.println("Nb ech théorique : " + (informationRecue.nbElements()*nbEch));
+				System.out.println("Nb ech reel : " + informationEmise.nbElements());
 			}
 		}
 		else if(forme.equalsIgnoreCase("RZ")) {

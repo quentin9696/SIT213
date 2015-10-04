@@ -1,5 +1,5 @@
 
-   import sources.*;
+import sources.*;
 import destinations.*;
 import transmetteurs.*;
 
@@ -7,7 +7,7 @@ import transmetteurs.*;
 
    import visualisations.*;
 
-   import java.util.regex.*;
+import java.util.regex.*;
 import java.util.*;
 import java.lang.Math;
 
