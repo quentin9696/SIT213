@@ -146,8 +146,23 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 				
 				System.out.println("Moyenne : "  + moyenne);
 				
-				float coefMax = Math.abs(max) - moyenne;
-				float coefMin = (moyenneAbs - Math.abs(min)) * -1;			
+				float coefMax;
+				float coefMin;
+				
+				if(moyenne > 0) {
+					coefMax = Math.abs(max) - moyenne;
+				}
+				else {
+					coefMax = Math.abs(max) - moyenneAbs;
+				}
+				
+				if(moyenne < 0) {
+					coefMin = (moyenneAbs - Math.abs(min));
+				}
+				else {
+					coefMin = (moyenneAbs - (min));
+				}
+							
 				System.out.println("CoefMax : "  + coefMax);
 				System.out.println("CoefMin : "  + coefMin);
 				
@@ -155,9 +170,12 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 					coefMax *= -1;
 				}
 				
-				if(min > 0) {
+				if(min < 0) {
 					coefMin *= -1;
 				}
+				
+				System.out.println("CoefMax : "  + coefMax);
+				System.out.println("CoefMin : "  + coefMin);
 				
 				for(int i=0; i<informationRecue.nbElements(); i++) {
 					boolean b = informationRecue.iemeElement(i);
