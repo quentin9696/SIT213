@@ -291,25 +291,25 @@ import java.io.PrintWriter;
    */   	   
       public float  calculTauxErreurBinaire() {
     	  
-      	/*// Prend les info reçues et envoyées	
+    	  // Prend les info reçues et envoyées	
     	  Information<Boolean> infoSource = source.getInformationEmise();
     	  Information<Boolean> infoRecu = destination.getInformationRecue();
 
-	// Compte le nombre de bits
+    	  // Compte le nombre de bits
     	  float nbTotal = infoSource.nbElements();
     	  float nbRecu = infoRecu.nbElements();
     	  float nbErreurs = 0.0f;
 
-	// Compte le nb d'erreur 
+    	  // Compte le nb d'erreur 
     	  for(int i=0; i<nbRecu; i++) {
     		  if(infoRecu.iemeElement(i) != infoSource.iemeElement(i)) {
     			  nbErreurs ++;
     		  }
     	  }
-	// Calcul du TEB 
-         return  nbErreurs/nbTotal;*/
     	  
-    	  return 0.0f;
+    	  // Calcul du TEB 
+    	  return  nbErreurs/nbTotal;
+    	  
       }
    
    
