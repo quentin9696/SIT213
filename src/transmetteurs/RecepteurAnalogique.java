@@ -114,7 +114,7 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 		} 
 		else if (forme.equalsIgnoreCase("NRZT")) {
 			System.out.println("nb bits : " + informationRecue.nbElements()/nbEch);
-
+			int i = 0;
 			if (informationRecue.nbElements() <= nbEch) {
 				for (float echantillon : informationRecue) {
 					somme += echantillon;
@@ -140,6 +140,8 @@ j++;
 					}
 					
 					if (j == nbEch) {
+						i++;
+						if (i< informationRecue.nbElements()/nbEch) {
 						if (first) {
 							if (somme > 0.95 * (nbEch / 2 - 1) * max) {
 								informationEmise.add(true);
@@ -152,10 +154,21 @@ j++;
 						} else {
 							informationEmise.add(false);
 						}
+						}
+						else
+						{
+							if (somme > 0.95 * ( nbEch / 2 - 1) * max) {
+								informationEmise.add(true);
+							} else {
+								informationEmise.add(false);
+							}
+							
+						}
 						j = 0;
 						somme = 0;
 					}
 				}
+			System.out.println("i : " + i + "nbech : " + nbEch);
 			}
 
 		} else if (forme.equalsIgnoreCase("NRZ")) {
