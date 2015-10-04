@@ -86,10 +86,6 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 					}
 				}
 			}
-			
-			System.out.println("Nb ech théorique : " + (informationRecue.nbElements()*nbEch));
-			System.out.println("Nb ech reel : " + informationEmise.nbElements());
-			
 		}
 		else if(forme.equalsIgnoreCase("NRZT")) {
 			
@@ -139,43 +135,10 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 				boolean bitSuivant = informationRecue.iemeElement(1);
 				
 				float prec; 
+				
 				float moyenne = (max+min)/2;
-				float moyenneAbs = Math.abs(moyenne);
-				System.out.println("Min : "  + max);
-				System.out.println("Max : "  + min);
-				
-				System.out.println("Moyenne : "  + moyenne);
-				
-				float coefMax;
-				float coefMin;
-				
-				if(moyenne > 0) {
-					coefMax = Math.abs(max) - moyenne;
-				}
-				else {
-					coefMax = Math.abs(max) - moyenneAbs;
-				}
-				
-				if(moyenne < 0) {
-					coefMin = (moyenneAbs - Math.abs(min));
-				}
-				else {
-					coefMin = (moyenneAbs - (min));
-				}
-							
-				System.out.println("CoefMax : "  + coefMax);
-				System.out.println("CoefMin : "  + coefMin);
-				
-				if(max < 0) {
-					coefMax *= -1;
-				}
-				
-				if(min < 0) {
-					coefMin *= -1;
-				}
-				
-				System.out.println("CoefMax : "  + coefMax);
-				System.out.println("CoefMin : "  + coefMin);
+				float coefMax = max - moyenne;
+				float coefMin = moyenne - min;
 				
 				for(int i=0; i<informationRecue.nbElements(); i++) {
 					boolean b = informationRecue.iemeElement(i);
@@ -185,8 +148,8 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 					}
 					
 					prec = moyenne;
-					//prec = 0.0f;
-					 if(i == 0) {
+					
+					if(i == 0) {
 						 prec = 0.0f;
 					 }
 					
@@ -429,9 +392,6 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 					}
 					bitPrec = b;
 				}
-				
-				System.out.println("Nb ech théorique : " + (informationRecue.nbElements()*nbEch));
-				System.out.println("Nb ech reel : " + informationEmise.nbElements());
 			}
 		}
 		else if(forme.equalsIgnoreCase("RZ")) {
@@ -442,54 +402,50 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 				
 				for(int i=0;i<nbEch; i++) {
 					if(b) { // Si le bit est 1 
-						if(i< nbEch * 1/3) {
+						if(i< nbEch * 1/3) { // Reste à 0 de 0 à 1/3
 							informationEmise.add(0.0f);
 						}
-						if(i>= nbEch* 1/3 && i < nbEch * 5/12) {
+						if(i>= nbEch* 1/3 && i < nbEch * 5/12) { // On monte 1/3 à 5/12
 							prec += (12*max/nbEch);
 							informationEmise.add(prec);
 						}
-						if(i >= nbEch * 5/12 && i < nbEch* 7/12 ) {
+						if(i >= nbEch * 5/12 && i < nbEch* 7/12 ) { // On reste au max de 5/12 à 7/12
 							informationEmise.add(max);
 							prec = max;
 						}
-						if(i>= nbEch * 7/12 && i< nbEch * 2/3) {
+						if(i>= nbEch * 7/12 && i< nbEch * 2/3) { // On descend de 7/12 à 2/3
 							prec-= (12*max/nbEch);
 							informationEmise.add(prec);
 						}
-						if(i >= (nbEch * 2/3)) {
+						if(i >= (nbEch * 2/3)) { //Reste à 0 de 2/3 à 1
 							informationEmise.add(0.0f);
 						}
 			
 					}
 					else { //si le bit est 0
-						if(i< nbEch * 1/3) {
+						if(i< nbEch * 1/3) { //on rste à 0 sur 0 à 1/3
 							informationEmise.add(0.0f);
 						}
 						
-						if(i>= nbEch* 1/3 && i < nbEch * 5/12) {
+						if(i>= nbEch* 1/3 && i < nbEch * 5/12) { // On monte de 1/3 à 5/12
 							prec -= Math.abs(12*min/nbEch);
 							informationEmise.add(prec);
 						}
-						if(i >= nbEch * 5/12 && i < nbEch* 7/12 ) {
+						if(i >= nbEch * 5/12 && i < nbEch* 7/12 ) { // On bloque de 5/12 à 7/12
 							informationEmise.add(min);
 							prec = min;
 						}
-						if(i>= nbEch * 7/12 && i< nbEch * 2/3) {
+						if(i>= nbEch * 7/12 && i< nbEch * 2/3) { // On redescend de 7/12 à 2/3
 							prec += Math.abs(12*min/nbEch);
 							informationEmise.add(prec);
 						}
-						if(i >= (nbEch * 2/3)) {
+						if(i >= (nbEch * 2/3)) { // On reste à 0 sur 2/3 à 1
 							informationEmise.add(0.0f);
 						}
 						
 					}
 				}
 			}
-			
-			System.out.println("Nb ech théorique : " + (informationRecue.nbElements()*nbEch));
-			System.out.println("Nb ech reel : " + informationEmise.nbElements());
-
 		}
 		
 		this.emettre();
