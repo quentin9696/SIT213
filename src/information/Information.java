@@ -5,7 +5,7 @@ package information;
    import java.util.*;
 
 /** 
- *  
+ *  Classe décrivant une information
  * @author prou
  */	
    public  class Information <T>  implements Iterable <T> {
@@ -45,6 +45,7 @@ package information;
    
    /**
     * pour renvoyer un élément d'une information
+    * @param i l'indice de l'élément 
     * @return le ieme élément de l'information
     */
       public T iemeElement(int i) {
@@ -54,6 +55,8 @@ package information;
    
    /**
     * pour modifier le ième élément d'une information
+    * @param i l'indice de l'élément à modifier
+    * @param v le nouvel élément
     */
       public void setIemeElement(int i, T v) {
          this.content.set(i, v);

@@ -28,7 +28,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 	 * @param max amplitude max du signal analagique généré
 	 * @param forme type de codage du signal analogique (NRZ, NRZT ou RZ)
 	 * @param nbEch nombre d'echentillon par symbole
-	 * @throws Un des paramètres n'est pas conforme
+	 * @throws EmetteurNonConforme Un des paramètres n'est pas conforme
 	 */
 	
 	public EmetteurAnalogique(float min, float max, String forme, int nbEch) throws EmetteurNonConforme {

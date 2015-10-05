@@ -40,8 +40,7 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 	 *            type de codage du signal analogique (NRZ, NRZT ou RZ)
 	 * @param nbEch
 	 *            nombre d'echantillons par symbole
-	 * @throws Un
-	 *             des paramètres n'est pas conforme
+	 * @throws RecepteurNonConforme Un des paramètres n'est pas conforme
 	 */
 
 	public RecepteurAnalogique(float min, float max, String forme, int nbEch)
