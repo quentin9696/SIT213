@@ -40,7 +40,8 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 	 *            type de codage du signal analogique (NRZ, NRZT ou RZ)
 	 * @param nbEch
 	 *            nombre d'echantillons par symbole
-	 * @throws RecepteurNonConforme Un des paramètres n'est pas conforme
+	 * @throws RecepteurNonConforme
+	 *             Un des paramètres n'est pas conforme
 	 */
 
 	public RecepteurAnalogique(float min, float max, String forme, int nbEch)
@@ -95,20 +96,37 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 		this.informationRecue = information;
 		this.informationEmise = new Information<Boolean>();
 		int j = 0;
+		int i = 0;
 		float somme = 0;
+		float esperance = (max + min) / 2;
 		if (forme.equalsIgnoreCase("RZ")) // Cas du signal RZ
 		{
 			for (float echantillon : informationRecue) {
 				j++;
-				if ((j - 1) > 5 * nbEch / 12 && (j - 1) < 7 * nbEch / 12) {
-					somme += echantillon; // Intervalle sur lequel la valeur des
-											// échantillons est significative
+				if (echantillon != 0)
+					somme += echantillon;
+				else
+					i++;
+				if (j == nbEch) {
+					if (somme / (nbEch - i) > esperance) {
+						informationEmise.add(true);
+					} else
+						informationEmise.add(false);
+
+					j = 0;
+					i = 0;
+					somme = 0;
+
 				}
 
+			}
+		} else if (forme.equalsIgnoreCase("NRZT")) // cas NRZT
+		{
+			for (float echantillon : informationRecue) {
+				j++;
+				somme += echantillon;
 				if (j == nbEch) {
-					//Comparaison de la valeur obtenue et de la valeur théorique (marge de 5%)
-					if (somme / (-1 + nbEch / 6) > 0.95 * max) 
-					{
+					if (somme / nbEch > esperance) {
 						informationEmise.add(true);
 					} else
 						informationEmise.add(false);
@@ -117,85 +135,25 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 					somme = 0;
 
 				}
-
 			}
-		} else if (forme.equalsIgnoreCase("NRZT")) //cas NRZT
-		{
-			int i = 0;
-			//cas ou un seul symbole est transmit
-			if (informationRecue.nbElements() <= nbEch) 
+		} else if (forme.equalsIgnoreCase("NRZ")) { // signal de forme NRZ
 			{
-				for (float echantillon : informationRecue) {
-					somme += echantillon;
-				}
-				if (somme > 0.95 * nbEch * max / 2)
-					informationEmise.add(true);
-				else
-					informationEmise.add(false);
-			} else //traitement de plusieurs symboles 
-			{
-				boolean first = true;
 				for (float echantillon : informationRecue) {
 					j++;
-
-					if (first) { //Premier symbole traité differement
-						//somme sur l'intervalle sur lequel la valeur est significative
-						if (j > nbEch / 3 && j < 5 * nbEch / 6) {
-							somme += echantillon;
-						}
-					} else if (j > nbEch / 6 && j < 5 * nbEch / 6) {
-						somme += echantillon;
-					}
-
+					somme += echantillon;
 					if (j == nbEch) {
-						i++;
-						if (i < informationRecue.nbElements() / nbEch) {
-							if (first) { //cas du premier bit
-								if (somme > 0.95 * (nbEch / 2 - 1) * max) {
-									informationEmise.add(true);
-								} else
-									informationEmise.add(false);
+						if (somme / nbEch > esperance) {
+							informationEmise.add(true);
+						} else
+							informationEmise.add(false);
 
-								first = false;
-							} else if (somme > 0.95 * (4 * nbEch / 6 - 1) * max)
-							{//autres bits
-								informationEmise.add(true);
-							} else {
-								informationEmise.add(false);
-							}
-						} else {//cas du dernier bit
-							if (somme > 0.95 * (nbEch / 2 - 1) * max) {
-								informationEmise.add(true);
-							} else {
-								informationEmise.add(false);
-							}
-
-						}
 						j = 0;
 						somme = 0;
+
 					}
+
 				}
-				System.out.println("i : " + i + "nbech : " + nbEch);
 			}
-
-		} else if (forme.equalsIgnoreCase("NRZ")) { //signal de forme NRZ
-			System.out.println("nb bits : " + informationRecue.nbElements()
-					/ nbEch);
-			for (float echantillon : informationRecue) {
-				j++;
-				somme += echantillon;
-				if (j == nbEch) {
-					if (somme / nbEch > 0.95 * max) {
-						informationEmise.add(true);
-					} else {
-						informationEmise.add(false);
-					}
-					j = 0;
-					somme = 0;
-				}
-
-			}
-
 		}
 
 		this.emettre();
