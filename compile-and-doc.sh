@@ -35,7 +35,7 @@ rm -rf bin/*
 rm -rf doc/*
 
 echo '######### Début de la génération de la javadoc #########'
-javadoc -sourcepath $sources -d ./doc -subpackages .
+javadoc -sourcepath $sources -d ./doc -subpackages . -exclude test
 echo '######### Fin de la javadoc #########'
 
 echo '######### Début de la compilation #########'
