@@ -103,13 +103,13 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 		{
 			for (float echantillon : informationRecue) {
 				j++;
-				if (j >= nbEch/3 && j < 2*nbEch/3)
+				if (j >= 5*nbEch/12  && j < 7*nbEch/12)
 				{
 					somme += echantillon;
 					i++;
 				}
 				if (j == nbEch) {
-					if (somme / i > esperance) {
+					if (somme/i  > esperance) {
 						informationEmise.add(true);
 					} else
 						informationEmise.add(false);
@@ -123,16 +123,47 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 			}
 		} else if (forme.equalsIgnoreCase("NRZT")) // cas NRZT
 		{
+			int nbBits = informationRecue.nbElements()/nbEch;
+			
 			for (float echantillon : informationRecue) {
 				j++;
-				somme += echantillon;
+				if (i == 0)
+				{
+					if (j > nbEch/3)
+						somme += echantillon;
+				}
+				else if (i == nbBits-1) 
+				{
+					if (j < 2*nbEch/3)
+					somme += echantillon;
+				}
+				else
+				{
+					somme += echantillon;
+				}
 				if (j == nbEch) {
-					if (somme / nbEch > esperance) {
+					if (i == 0)
+					{
+						if (somme / (2*nbEch/3) > esperance) {
+							informationEmise.add(true);
+						} else
+							informationEmise.add(false);
+					}
+					else if (i == nbBits - 1)
+					{
+						if (somme / (2*nbEch/3) > esperance) {
+							informationEmise.add(true);
+						} else
+							informationEmise.add(false);
+						
+					}
+					else if (somme / nbEch > esperance) {
 						informationEmise.add(true);
 					} else
 						informationEmise.add(false);
 
 					j = 0;
+					i++;
 					somme = 0;
 
 				}
