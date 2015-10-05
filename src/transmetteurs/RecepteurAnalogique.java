@@ -103,12 +103,13 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 		{
 			for (float echantillon : informationRecue) {
 				j++;
-				if (echantillon != 0)
+				if (j >= nbEch/3 && j < 2*nbEch/3)
+				{
 					somme += echantillon;
-				else
 					i++;
+				}
 				if (j == nbEch) {
-					if (somme / (nbEch - i) > esperance) {
+					if (somme / i > esperance) {
 						informationEmise.add(true);
 					} else
 						informationEmise.add(false);
