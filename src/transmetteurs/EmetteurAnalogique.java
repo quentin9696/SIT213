@@ -395,36 +395,16 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 			}
 		}
 		else if(forme.equalsIgnoreCase("RZ")) {
-			float prec = 0.0f;
 
 			for(Boolean b : informationRecue) {
-				prec = 0.0f;
 				
 				for(int i=0;i<nbEch; i++) {
 					if(b) { // Si le bit est 1 
 						if(i< nbEch * 1/3) { // Reste à 0 de 0 à 1/3
 							informationEmise.add(0.0f);
 						}
-						if(i>= nbEch* 1/3 && i < nbEch * 5/12) { // On monte 1/3 à 5/12
-							prec += (12*max/nbEch);
-							
-							/*if(prec > max) {
-								prec = max;
-							}*/
-							
-							informationEmise.add(prec);
-						}
-						if(i >= nbEch * 5/12 && i < nbEch* 7/12 ) { // On reste au max de 5/12 à 7/12
+						if(i>= nbEch * 1/3 && i< nbEch * 2/3) { // On reste au max sur 1/3 à 2/3 
 							informationEmise.add(max);
-							prec = max;
-						}
-						if(i>= nbEch * 7/12 && i< nbEch * 2/3) { // On descend de 7/12 à 2/3
-							prec-= (12*max/(nbEch));
-							
-							/*/if(prec < 0) {
-								prec = 0.0f;
-							}*/
-							informationEmise.add(prec);
 						}
 						if(i >= (nbEch * 2/3)) { //Reste à 0 de 2/3 à 1
 							informationEmise.add(0.0f);
@@ -435,28 +415,8 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 						if(i< nbEch * 1/3) { //on rste à 0 sur 0 à 1/3
 							informationEmise.add(0.0f);
 						}
-						
-						if(i>= nbEch* 1/3 && i < nbEch * 5/12) { // On monte de 1/3 à 5/12
-							prec -= Math.abs(12*min/nbEch);
-							
-							/*if(prec < min) {
-								prec = min;
-							}*/
-							
-							informationEmise.add(prec);
-						}
-						if(i >= nbEch * 5/12 && i < nbEch* 7/12 ) { // On bloque de 5/12 à 7/12
+						if(i>= nbEch * 1/3 && i< nbEch * 2/3) { // On reste au min sur 1/3 à 2/3 
 							informationEmise.add(min);
-							prec = min;
-						}
-						if(i>= nbEch * 7/12 && i< nbEch * 2/3) { // On redescend de 7/12 à 2/3
-							prec += Math.abs(12*min/(nbEch));
-							
-							/*if(prec > 0) {
-								prec = 0.0f;
-							}*/
-							
-							informationEmise.add(prec);
 						}
 						if(i >= (nbEch * 2/3)) { // On reste à 0 sur 2/3 à 1
 							informationEmise.add(0.0f);
