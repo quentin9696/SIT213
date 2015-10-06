@@ -48,6 +48,9 @@ import java.io.PrintWriter;
    /** l'amplitude du signal. Correspond au paramètre -ampl min max */
       private 			float min = 0.0f;
       private			float max = 1.0f;
+      
+      private 			boolean avecBruit = false;
+      private 			float snr = 0.0f;
    
    
    	
@@ -59,6 +62,7 @@ import java.io.PrintWriter;
    /** le  composant Transmetteur parfait logique de la chaine de transmission */
       private			  Transmetteur <Boolean, Boolean>  transmetteurLogique = null;
       private			  Transmetteur <Float, Float>  transmetteurAnalogique = null;
+      private			  Transmetteur <Float, Float>  transmetteurAnalogiqueBruite = null;
       
       private			Transmetteur<Float, Boolean> recepteur = null;
    /** le  composant Destination de la chaine de transmission */
@@ -72,9 +76,10 @@ import java.io.PrintWriter;
    *
    * @throws ArgumentsException si un des arguments est incorrect
    * @throws EmetteurNonConforme l'emetteur n'est pas correct  
+ * @throws TransmetteurAnalogiqueBruiteNonConforme 
    *
    */   
-      public  Simulateur(String [] args) throws ArgumentsException, EmetteurNonConforme, RecepteurNonConforme {
+      public  Simulateur(String [] args) throws ArgumentsException, EmetteurNonConforme, RecepteurNonConforme, TransmetteurAnalogiqueBruiteNonConforme {
       
       	// analyser et rÃ©cupÃ©rer les arguments
       	
@@ -100,8 +105,14 @@ import java.io.PrintWriter;
          emetteur = new EmetteurAnalogique(min, max, forme, nbEch);
          recepteur = new RecepteurAnalogique(min, max, forme, nbEch);
          
-         //Transmeteur
-         transmetteurAnalogique = new TransmetteurParfaitAnalogique();
+         //Transmeteur 
+         if(!avecBruit) {
+        	 transmetteurAnalogique = new TransmetteurParfaitAnalogique();
+         }
+         else {
+        	 transmetteurAnalogiqueBruite = new TransmetteurAnalogiqueBruite(snr);
+         }
+         
          
          
          // Destination 
@@ -110,8 +121,16 @@ import java.io.PrintWriter;
          // Connection entre les modules
          
          source.connecter(emetteur);
-         emetteur.connecter(transmetteurAnalogique);
-         transmetteurAnalogique.connecter(recepteur);
+         
+         if(!avecBruit) {
+        	 emetteur.connecter(transmetteurAnalogique);
+             transmetteurAnalogique.connecter(recepteur);
+         }
+         else {
+        	 emetteur.connecter(transmetteurAnalogiqueBruite);
+             transmetteurAnalogiqueBruite.connecter(recepteur);
+         }
+         
          recepteur.connecter(destination);
          
          /*transmetteurLogique = new TransmetteurParfait();
@@ -128,7 +147,13 @@ import java.io.PrintWriter;
              
              source.connecter(sl1);
              emetteur.connecter(sa1);
-             transmetteurAnalogique.connecter(sa2);
+             if(!avecBruit) {
+            	 transmetteurAnalogique.connecter(sa2);
+             }
+             else {
+            	 transmetteurAnalogiqueBruite.connecter(sa2);
+             }
+             
              recepteur.connecter(sl2);
              
          }
@@ -257,6 +282,20 @@ import java.io.PrintWriter;
         		   	throw new ArgumentsException("Valeur du parametre -ampl  invalide :" + args[i]);
         	   }
             }
+            
+            else if (args[i].matches("-snr")) {
+         	   i++; 
+         	   // traiter la valeur associee
+         	   
+         	   try { 
+                    snr =new Float(args[i]);
+                 }
+                 catch (Exception e) {
+                       throw new ArgumentsException("Valeur du parametre -snr  invalide :" + args[i]);
+                 }
+         	   
+         	   avecBruit = true; 
+            }
                                    
             else 
             	throw new ArgumentsException("Option invalide :"+ args[i]);
@@ -306,6 +345,9 @@ import java.io.PrintWriter;
     			  nbErreurs ++;
     		  }
     	  }
+    	  
+    	  System.out.println("Nb emis : " + infoSource.nbElements());
+    	  System.out.println("Nb reçu : " + infoRecu.nbElements());
     	  
     	  // Calcul du TEB 
     	  return  nbErreurs/nbTotal;
