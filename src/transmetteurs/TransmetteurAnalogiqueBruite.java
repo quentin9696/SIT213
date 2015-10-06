@@ -26,7 +26,7 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float,Float> {
 		informationEmise = new Information<Float>();
 		this.snr = (float) Math.pow(10, snr/10);
 		
-		if(snr <= 0) {
+		if(this.snr <= 0) {
 			throw new TransmetteurAnalogiqueBruiteNonConforme("SNR strictement positif non nul");
 		}
 	}
