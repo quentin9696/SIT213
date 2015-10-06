@@ -284,16 +284,17 @@ import java.io.PrintWriter;
             }
             
             else if (args[i].matches("-snr")) {
-         	   i++; 
-         	   // traiter la valeur associee
+         	   	i++; 
+         	   	
+         	   	// traiter la valeur associee
          	   
-         	   try { 
-                    snr =new Float(args[i]);
-                 }
-                 catch (Exception e) {
+         	   	try { 
+                    snr = new Float(args[i]);
+                }
+                catch (Exception e) {
                        throw new ArgumentsException("Valeur du parametre -snr  invalide :" + args[i]);
-                 }
-         	   
+                }
+         	   System.out.println("snr : " + snr);
          	   avecBruit = true; 
             }
                                    
