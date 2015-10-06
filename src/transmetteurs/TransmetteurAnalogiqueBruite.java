@@ -13,19 +13,31 @@ import destinations.*;
 
 public class TransmetteurAnalogiqueBruite extends Transmetteur<Float,Float> {
 
+	/** Valeur du SNR (linéaire) */
+	private float snr;
+	
 	/**
-	 * Méthode permettant de revevoir une information  et le stocker dans l'attribut informationRecue
-	 * @param information : L'information (de type boolean) recue de la source
-	 * @throws InformationNonConforme : L'information n'est pas conforme (exemple : information null)
-	 *
-	*/
-	float snr;
+	 * Constructeur d'un transmetteur analogique bruité
+	 * @param snr La valeur dur SNR en log
+	 * @throws TransmetteurAnalogiqueBruiteNonConforme Le SNR en linéaire doit être positif non nul
+	 */
 	public TransmetteurAnalogiqueBruite(float snr) throws TransmetteurAnalogiqueBruiteNonConforme {
 		super();
 		informationEmise = new Information<Float>();
 		this.snr = (float) Math.pow(10, snr/10);
+		
+		if(snr <= 0) {
+			throw new TransmetteurAnalogiqueBruiteNonConforme("SNR strictement positif non nul");
+		}
 	}
 	
+	/**
+	 * Méthode permettant de revevoir une information d'ajouter du bruit (blanc gaussien) et de transmettre 
+	 * @param information : L'information (de type float) recue de l'emetteur
+	 * @throws InformationNonConforme : L'information n'est pas conforme (exemple : information null)
+	 * @throws  ez
+	 *
+	*/
 	@Override
 	public void recevoir(Information<Float> information)
 			throws InformationNonConforme {
@@ -35,24 +47,27 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float,Float> {
 		}
 
 		this.informationRecue = information;
-		//this.informationEmise = informationRecue;
 		
 		float puissanceSignalMoyen = 0.0f;
 		
+		// Calcul de la puissance moyenne du signal
 		for(float valeur : informationRecue) {
 			puissanceSignalMoyen += valeur * valeur;
 		}
 		
 		puissanceSignalMoyen /= informationRecue.nbElements();
 		
+		// Calcul de la puissance moyenne du bruit blanc gaussien
 		float puissanceBruitMoyen = puissanceSignalMoyen/snr;
 		
 		float sigma = (float) Math.sqrt(puissanceBruitMoyen);
 		
+		//Déclaraion de 2 loi uniforme
 		Random a1 = new Random();
 		Random a2 = new Random();
 		
 		for(float signal : informationRecue) {
+			//Calcul du bruit et ajout au signal
 			signal += sigma*Math.sqrt(-2*Math.log(1-a1.nextFloat()))*Math.cos(2*Math.PI*a2.nextFloat());
 			informationEmise.add(signal);
 		}
@@ -62,7 +77,7 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float,Float> {
 	}
 	
 	/**
-         * Méthode permettant d'émettre l'information recue sans la modifier
+         * Méthode permettant d'émettre l'information emise (modifier au préalable par la methode recevoir)
          * @throws InformationNonConforme : L'information n'est pas conforme
          *
         */
