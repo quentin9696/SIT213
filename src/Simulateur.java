@@ -316,6 +316,22 @@ import java.io.PrintWriter;
          
     	 try {
   			source.emettre();
+
+  			emetteur.emettre();
+  			
+  			
+  			if(!avecBruit) {
+  				transmetteurAnalogique.emettre();
+  			}
+  			else {
+  				//emetteur.recyclerRAM();
+  				transmetteurAnalogiqueBruite.emettre();
+  	  			//transmetteurAnalogiqueBruite.recyclerRAM();
+  			}
+  			
+  			recepteur.emettre();
+  			//recepteur.recyclerRAM();
+  			
   		} catch (InformationNonConforme e) {
   			// TODO Auto-generated catch block
   			e.printStackTrace();
@@ -337,12 +353,19 @@ import java.io.PrintWriter;
 
     	  // Compte le nombre de bits
     	  float nbTotal = infoSource.nbElements();
-    	  float nbRecu = infoRecu.nbElements();
     	  float nbErreurs = 0.0f;
 
-    	  // Compte le nb d'erreur 
-    	  for(int i=0; i<nbRecu; i++) {
-    		  if(infoRecu.iemeElement(i) != infoSource.iemeElement(i)) {
+    	  
+    	  // Compte le nb d'erreur
+    	  // Utilisation des itérateurs parce que c'est la vie <3
+    	  Iterator<Boolean> iterateurSource = infoSource.iterator();
+    	  Iterator<Boolean> iterateurDest = infoRecu.iterator();
+    	  
+    	  while(iterateurDest.hasNext() && iterateurSource.hasNext()) {
+    		  boolean bE = iterateurSource.next();
+    		  boolean bR = iterateurDest.next();
+    		  
+    		  if(bE != bR) {
     			  nbErreurs ++;
     		  }
     	  }

@@ -107,5 +107,12 @@ package information;
       public Iterator <T> iterator() {
          return content.iterator();
       }
+      
+      /**
+       * Vider une information 
+       */
+      public void vider() {
+    	  content.clear();
+      }
    
    }

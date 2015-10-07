@@ -28,7 +28,6 @@ public class TransmetteurParfait extends Transmetteur<Boolean,Boolean> {
 
 		this.informationRecue = information;
 		this.informationEmise = informationRecue;
-		this.emettre();
 		
 	}
 	
@@ -46,4 +45,10 @@ public class TransmetteurParfait extends Transmetteur<Boolean,Boolean> {
          }
 	}
 
+	/**
+     * recycle la RAM en libérant les information stockée 
+     */
+    
+	   	public void recyclerRAM() {
+		}
 }

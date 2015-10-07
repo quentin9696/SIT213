@@ -188,8 +188,6 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 			}
 		}
 
-		this.emettre();
-
 	}
 
 	/**
@@ -208,4 +206,11 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 		}
 	}
 
+	/**
+     * recycle la RAM en libérant les information stockée 
+     */
+    
+	   	public void recyclerRAM() {
+			this.informationRecue.vider();
+		}
 }

@@ -3,6 +3,7 @@ package transmetteurs;
 import information.Information;
 import information.InformationNonConforme;
 import java.lang.Math;
+import java.util.Iterator;
 
 import destinations.*;
 
@@ -140,11 +141,20 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 				float coefMax = max - moyenne;
 				float coefMin = moyenne - min;
 				
-				for(int i=0; i<informationRecue.nbElements(); i++) {
-					boolean b = informationRecue.iemeElement(i);
+				int i = 0;
+				
+				Iterator<Boolean> iterator = informationRecue.iterator();
+				iterator.next();
+				
+				for(boolean b : informationRecue) {
 					
-					if(i<(informationRecue.nbElements()-1)) {
-						bitSuivant = informationRecue.iemeElement(i+1);
+					/*if(i<(informationRecue.nbElements()-1)) {
+						//bitSuivant = informationRecue.iemeElement(i+1);
+						bitSuivant = iterator.next();
+					}*/
+					
+					if(iterator.hasNext()) {
+						bitSuivant = iterator.next();
 					}
 					
 					prec = moyenne;
@@ -391,6 +401,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 						}
 					}
 					bitPrec = b;
+					i++;
 				}
 			}
 		}
@@ -426,8 +437,6 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 				}
 			}
 		}
-		
-		this.emettre();
 	}
 	
 	/**
@@ -443,5 +452,12 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
             destinationConnectee.recevoir(informationEmise);
          }
 	}
-
+	
+	/**
+     * recycle la RAM en libérant les information stockée 
+     */
+    
+	   	public void recyclerRAM() {
+			this.informationEmise.vider();
+		}
 }

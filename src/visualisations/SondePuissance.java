@@ -28,7 +28,7 @@
             puissance +=  information.iemeElement(i) *  information.iemeElement(i);
          }
          puissance = puissance / nbElements;
-         new VueValeur (puissance,  nom); 
+         new VueValeur(puissance,  nom); 
       }
    	 
    	

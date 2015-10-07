@@ -43,7 +43,9 @@ public class TransmetteurParfaitAnalogique extends Transmetteur<Float,Float> {
 		
 		for (DestinationInterface<Float> destinationConnectee : destinationsConnectees) {
             destinationConnectee.recevoir(informationEmise);
-         }
+		}
 	}
-
+	
+   	public void recyclerRAM() {
+	}
 }

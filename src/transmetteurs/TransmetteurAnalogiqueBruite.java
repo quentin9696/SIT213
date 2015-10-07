@@ -52,7 +52,7 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float,Float> {
 		
 		// Calcul de la puissance moyenne du signal
 		for(float valeur : informationRecue) {
-			puissanceSignalMoyen += valeur * valeur;
+			puissanceSignalMoyen += Math.pow(valeur,2);
 		}
 		
 		puissanceSignalMoyen /= informationRecue.nbElements();
@@ -71,9 +71,6 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float,Float> {
 			signal += sigma*Math.sqrt(-2*Math.log(1-a1.nextFloat()))*Math.cos(2*Math.PI*a2.nextFloat());
 			informationEmise.add(signal);
 		}
-		
-		this.emettre();
-		
 	}
 	
 	/**
@@ -89,5 +86,14 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float,Float> {
             destinationConnectee.recevoir(informationEmise);
          }
 	}
+	
+	/**
+     * recycle la RAM en libérant les information stockée 
+     */
+    
+	   	public void recyclerRAM() {
+			this.informationEmise.vider();
+			this.informationRecue.vider();
+		}
 
 }

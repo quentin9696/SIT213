@@ -74,7 +74,7 @@ package transmetteurs;
     */
        public void deconnecter (DestinationInterface <E> destination) {
          destinationsConnectees.remove(destination); 
-      }
+       }
 
    	    
    /**
@@ -88,5 +88,11 @@ package transmetteurs;
     /**
     * émet l'information construite par le transmetteur  
     */
-      public  abstract void emettre() throws InformationNonConforme;   
+      public  abstract void emettre() throws InformationNonConforme;
+      
+      /**
+       * recycle la RAM en libérant les information stockée 
+       */
+      
+	   	public abstract void recyclerRAM();
    }
