@@ -219,11 +219,12 @@ import java.io.PrintWriter;
                i++; 
             	// traiter la valeur associee
                messageString = args[i];
-               if (args[i].matches("[0,1]{7,}")) {
+               /*if (args[i].matches("[0,1]{7,}")) {
                   messageAleatoire = false;
                   nbBitsMess = args[i].length();
                } 
-               else if (args[i].matches("[0-9]{1,6}")) {
+               else if (args[i].matches("[0-9]{1,6}")) {*/
+               if (args[i].matches("[0-9]{1,}")) {
                   messageAleatoire = true;
                   nbBitsMess = new Integer(args[i]);
                   if (nbBitsMess < 1) 
