@@ -46,25 +46,25 @@ import java.io.PrintWriter;
    /** la forme du signal. Correspond au paramètre -form f */
       private 			String forme = "RZ";
    /** l'amplitude du signal. Correspond au paramètre -ampl min max */
-      private 			float min = 0.0f;
-      private			float max = 1.0f;
+      private 			double min = 0.0f;
+      private			double max = 1.0f;
       
       private 			boolean avecBruit = false;
-      private 			float snr = 0.0f;
+      private 			double snr = 0.0f;
    
    
    	
    /** le  composant Source de la chaine de transmission */
       private			  Source <Boolean>  source = null;
       
-      private			Transmetteur<Boolean, Float> emetteur = null;
+      private			Transmetteur<Boolean, Double> emetteur = null;
       
    /** le  composant Transmetteur parfait logique de la chaine de transmission */
       private			  Transmetteur <Boolean, Boolean>  transmetteurLogique = null;
-      private			  Transmetteur <Float, Float>  transmetteurAnalogique = null;
-      private			  Transmetteur <Float, Float>  transmetteurAnalogiqueBruite = null;
+      private			  Transmetteur<Double, Double>  transmetteurAnalogique = null;
+      private			  Transmetteur <Double, Double>  transmetteurAnalogiqueBruite = null;
       
-      private			Transmetteur<Float, Boolean> recepteur = null;
+      private			Transmetteur<Double, Boolean> recepteur = null;
    /** le  composant Destination de la chaine de transmission */
       private			  Destination <Boolean>  destination = null;
       
@@ -177,12 +177,12 @@ import java.io.PrintWriter;
    * <br>
    * <dt> -form f </dt><dd>  codage (String) RZ, NRZR, NRZT, la forme d'onde du signal Ã  transmettre (RZ par dÃ©faut)</dd>
    * <dt> -nbEch ne </dt><dd> ne (int) le nombre d'Ã©chantillons par bit (ne >= 6 pour du RZ, ne >= 9 pour du NRZT, ne >= 18 pour du RZ,  30 par dÃ©faut))</dd>
-   * <dt> -ampl min max </dt><dd>  min (float) et max (float), les amplitudes min et max du signal analogique Ã  transmettre ( min < max, 0.0 et 1.0 par dï¿œfaut))</dd> 
+   * <dt> -ampl min max </dt><dd>  min (double) et max (double), les amplitudes min et max du signal analogique Ã  transmettre ( min < max, 0.0 et 1.0 par dï¿œfaut))</dd> 
    * <br>
-   * <dt> -snr s </dt><dd> s (float) le rapport signal/bruit en dB</dd>
+   * <dt> -snr s </dt><dd> s (double) le rapport signal/bruit en dB</dd>
    * <br>
    * <dt> -ti i dt ar </dt><dd> i (int) numero du trajet indirect (de 1 Ã  5), dt (int) valeur du decalage temporel du iÃšme trajet indirect 
-   * en nombre d'Ã©chantillons par bit, ar (float) amplitude relative au signal initial du signal ayant effectuÃ© le iÃšme trajet indirect</dd>
+   * en nombre d'Ã©chantillons par bit, ar (double) amplitude relative au signal initial du signal ayant effectuÃ© le iÃšme trajet indirect</dd>
    * <br>
    * <dt> -transducteur </dt><dd> utilisation de transducteur</dd>
    * <br>
@@ -264,7 +264,7 @@ import java.io.PrintWriter;
         	   // traiter la valeur associee
         	   
         	   try { 
-                   min =new Float(args[i]);
+                   min =new Double(args[i]);
                 }
                 catch (Exception e) {
                       throw new ArgumentsException("Valeur du parametre -ampl  invalide :" + args[i]);
@@ -273,7 +273,7 @@ import java.io.PrintWriter;
         	   i++;
         	   
         	   try { 
-                   max =new Float(args[i]);
+                   max =new Double(args[i]);
                 }
                 catch (Exception e) {
                       throw new ArgumentsException("Valeur du parametre -ampl  invalide :" + args[i]);
@@ -290,7 +290,7 @@ import java.io.PrintWriter;
          	   	// traiter la valeur associee
          	   
          	   	try { 
-                    snr = new Float(args[i]);
+                    snr = new Double(args[i]);
                 }
                 catch (Exception e) {
                        throw new ArgumentsException("Valeur du parametre -snr  invalide :" + args[i]);
@@ -346,15 +346,15 @@ import java.io.PrintWriter;
    *
    * @return  La valeur du Taux dErreur Binaire.
    */   	   
-      public float  calculTauxErreurBinaire() {
+      public double  calculTauxErreurBinaire() {
     	  
     	  // Prend les info reçues et envoyées	
     	  Information<Boolean> infoSource = source.getInformationEmise();
     	  Information<Boolean> infoRecu = destination.getInformationRecue();
 
     	  // Compte le nombre de bits
-    	  float nbTotal = infoSource.nbElements();
-    	  float nbErreurs = 0.0f;
+    	  double nbTotal = infoSource.nbElements();
+    	  double nbErreurs = 0.0f;
 
     	  
     	  // Compte le nb d'erreur
@@ -396,10 +396,12 @@ import java.io.PrintWriter;
                System.out.println(e); 
                System.exit(-1);
             } 
-      		
+      	Scanner scan = new Scanner(System.in);
+      	scan.next();
+      	
          try {
             simulateur.execute();
-            float tauxErreurBinaire = simulateur.calculTauxErreurBinaire();
+            double tauxErreurBinaire = simulateur.calculTauxErreurBinaire();
             String s = "java  Simulateur  ";
             for (int i = 0; i < args.length; i++) {
          		s += args[i] + "  ";

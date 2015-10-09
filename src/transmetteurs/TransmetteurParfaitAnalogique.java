@@ -9,7 +9,7 @@ import destinations.*;
  * Classe d'un transmetteur parfait. Celui se contente de recevoir un message et le transmet à un tous les destinataire qui lui sont rattaché
 */
 
-public class TransmetteurParfaitAnalogique extends Transmetteur<Float,Float> {
+public class TransmetteurParfaitAnalogique extends Transmetteur<Double,Double> {
 
 	/**
 	 * Méthode permettant de revevoir une information  et le stocker dans l'attribut informationRecue
@@ -18,7 +18,7 @@ public class TransmetteurParfaitAnalogique extends Transmetteur<Float,Float> {
 	 *
 	*/
 	@Override
-	public void recevoir(Information<Float> information)
+	public void recevoir(Information<Double> information)
 			throws InformationNonConforme {
 		
 		if(information == null) {
@@ -41,7 +41,7 @@ public class TransmetteurParfaitAnalogique extends Transmetteur<Float,Float> {
 	@Override
 	public void emettre() throws InformationNonConforme {
 		
-		for (DestinationInterface<Float> destinationConnectee : destinationsConnectees) {
+		for (DestinationInterface<Double> destinationConnectee : destinationsConnectees) {
             destinationConnectee.recevoir(informationEmise);
 		}
 	}

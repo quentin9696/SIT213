@@ -8,16 +8,16 @@ import java.util.Iterator;
 import destinations.*;
 
 /**
- * Classe d'un emetteur parfait boolean vers float. Celui recois les informations binaire et les rend analogique par différents codage (NRZ, NRZT, RZ)
+ * Classe d'un emetteur parfait boolean vers double. Celui recois les informations binaire et les rend analogique par différents codage (NRZ, NRZT, RZ)
 */
 
-public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
+public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 
 	
 	/** Amplitude minimun pour l'echentillonage */
-	private float min;
+	private double min;
 	/** Amplitude max pour l'echentillonage */
-	private float max;
+	private double max;
 	/** type de codage */
 	private String forme;
 	/** Nombre d'enchentillons par symbole */
@@ -32,7 +32,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 	 * @throws EmetteurNonConforme Un des paramètres n'est pas conforme
 	 */
 	
-	public EmetteurAnalogique(float min, float max, String forme, int nbEch) throws EmetteurNonConforme {
+	public EmetteurAnalogique(double min, double max, String forme, int nbEch) throws EmetteurNonConforme {
 		super();
 		
 		if(min > max) {
@@ -73,7 +73,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 		}
 		this.informationRecue = information;
 		
-		informationEmise = new Information<Float>();
+		informationEmise = new Information<Double>();
 		
 		if(forme.equalsIgnoreCase("NRZ")) {
 			
@@ -92,7 +92,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 			
 			if(informationRecue.nbElements()<2) {
 				
-				float prec = 0.0f;
+				double prec = 0.0f;
 				
 				if(informationRecue.iemeElement(0)) { // Si l'unique bit est 1
 					for(int i=0; i<nbEch; i++) {
@@ -135,11 +135,11 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 				boolean bitPrec = informationRecue.iemeElement(0);
 				boolean bitSuivant = informationRecue.iemeElement(1);
 				
-				float prec; 
+				double prec; 
 				
-				float moyenne = (max+min)/2;
-				float coefMax = max - moyenne;
-				float coefMin = moyenne - min;
+				double moyenne = (max+min)/2;
+				double coefMax = max - moyenne;
+				double coefMin = moyenne - min;
 				
 				int i = 0;
 				
@@ -412,25 +412,25 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 				for(int i=0;i<nbEch; i++) {
 					if(b) { // Si le bit est 1 
 						if(i< nbEch * 1/3) { // Reste à 0 de 0 à 1/3
-							informationEmise.add(0.0f);
+							informationEmise.add(0.0);
 						}
 						if(i>= nbEch * 1/3 && i< nbEch * 2/3) { // On reste au max sur 1/3 à 2/3 
 							informationEmise.add(max);
 						}
 						if(i >= (nbEch * 2/3)) { //Reste à 0 de 2/3 à 1
-							informationEmise.add(0.0f);
+							informationEmise.add(0.0);
 						}
 			
 					}
 					else { //si le bit est 0
 						if(i< nbEch * 1/3) { //on rste à 0 sur 0 à 1/3
-							informationEmise.add(0.0f);
+							informationEmise.add(0.0);
 						}
 						if(i>= nbEch * 1/3 && i< nbEch * 2/3) { // On reste au min sur 1/3 à 2/3 
 							informationEmise.add(min);
 						}
 						if(i >= (nbEch * 2/3)) { // On reste à 0 sur 2/3 à 1
-							informationEmise.add(0.0f);
+							informationEmise.add(0.0);
 						}
 						
 					}
@@ -448,7 +448,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Float> {
 	@Override
 	public void emettre() throws InformationNonConforme {
 		
-		for (DestinationInterface<Float> destinationConnectee : destinationsConnectees) {
+		for (DestinationInterface<Double> destinationConnectee : destinationsConnectees) {
             destinationConnectee.recevoir(informationEmise);
          }
 	}

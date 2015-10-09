@@ -18,8 +18,8 @@
       private static final long serialVersionUID = 1917L;
    
       private Point2D.Float [] coordonnees;
-      private float yMax = 0;
-      private float yMin = 0;
+      private double yMax = 0;
+      private double yMin = 0;
    	
    	
       public  VueCourbe (boolean [] valeurs, int nbPixels, String nom) {   
@@ -57,7 +57,7 @@
       }
    
    
-      public  VueCourbe (float [] valeurs, String nom) {   
+      public  VueCourbe (double [] valeurs, String nom) {   
        
          super(nom);      
       
@@ -74,7 +74,7 @@
                yMax = valeurs[i];
             if (valeurs[i] < yMin)
                yMin = valeurs[i];
-            coordonnees[i] = new Point2D.Float(i, valeurs[i]);
+            coordonnees[i] = new Point2D.Float(i, (float) valeurs[i]);
          }
       
          setDefaultCloseOperation(EXIT_ON_CLOSE);  
@@ -109,7 +109,7 @@
          paint();
       }
    
-      public  void changer (float [] valeurs) {   
+      public  void changer (double [] valeurs) {   
              
          this.coordonnees = new Point2D.Float [valeurs.length];
          yMax = 0;
@@ -120,7 +120,7 @@
                yMax = valeurs[i];
             if (valeurs[i] < yMin)
                yMin = valeurs[i];
-            coordonnees[i] = new Point2D.Float(i, valeurs[i]);
+            coordonnees[i] = new Point2D.Float(i, (float) valeurs[i]);
          }
       
          paint();
@@ -146,10 +146,10 @@
       	
       	
          int x0Axe = 10;
-         float deltaX = getContentPane().getWidth() - (2 * x0Axe);
+         double deltaX = getContentPane().getWidth() - (2 * x0Axe);
       	
          int y0Axe = 10;
-         float deltaY = getContentPane().getHeight() - (2 * y0Axe);      	 
+         double deltaY = getContentPane().getHeight() - (2 * y0Axe);      	 
       	
       	
          if ((yMax > 0) && (yMin <= 0)) {
@@ -172,8 +172,8 @@
       	
       	// tracer la courbe
       
-         float dx =  deltaX / (float) coordonnees[coordonnees.length - 1].getX();
-         float dy = 0.0f;
+         double dx =  deltaX / (double) coordonnees[coordonnees.length - 1].getX();
+         double dy = 0.0f;
          if ((yMax >= 0) && (yMin <= 0)) {
             dy =  deltaY / (yMax-yMin);
          }

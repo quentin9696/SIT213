@@ -10,7 +10,7 @@ import destinations.*;
  * le transmet à un tous les destinataire qui lui sont rattaché
  */
 
-public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
+public class RecepteurAnalogique extends Transmetteur<Double, Boolean> {
 
 	/**
 	 * Méthode permettant de revevoir une information et le stocker dans
@@ -24,8 +24,8 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 	 * 
 	 */
 
-	private float min;
-	private float max;
+	private double min;
+	private double max;
 	private String forme;
 	private int nbEch;
 
@@ -44,7 +44,7 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 	 *             Un des paramètres n'est pas conforme
 	 */
 
-	public RecepteurAnalogique(float min, float max, String forme, int nbEch)
+	public RecepteurAnalogique(double min, double max, String forme, int nbEch)
 			throws RecepteurNonConforme {
 		super();
 		if (min > max) {
@@ -86,7 +86,7 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 	 */
 
 	@Override
-	public void recevoir(Information<Float> information)
+	public void recevoir(Information<Double> information)
 			throws InformationNonConforme {
 
 		if (information == null) {
@@ -97,11 +97,11 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 		this.informationEmise = new Information<Boolean>();
 		int j = 0;
 		int i = 0;
-		float somme = 0;
-		float esperance = (max + min) / 2;
+		double somme = 0;
+		double esperance = (max + min) / 2;
 		if (forme.equalsIgnoreCase("RZ")) // Cas du signal RZ
 		{
-			for (float echantillon : informationRecue) {
+			for (double echantillon : informationRecue) {
 				j++;
 				if (j >= 1*nbEch/3  && j < 2*nbEch/3)
 				{
@@ -125,7 +125,7 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 		{
 			int nbBits = informationRecue.nbElements()/nbEch;
 			
-			for (float echantillon : informationRecue) {
+			for (double echantillon : informationRecue) {
 				j++;
 				if (i == 0)
 				{
@@ -170,7 +170,7 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean> {
 			}
 		} else if (forme.equalsIgnoreCase("NRZ")) { // signal de forme NRZ
 			{
-				for (float echantillon : informationRecue) {
+				for (double echantillon : informationRecue) {
 					j++;
 					somme += echantillon;
 					if (j == nbEch) {
