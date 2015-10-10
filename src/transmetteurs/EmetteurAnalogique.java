@@ -73,7 +73,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 		}
 		this.informationRecue = information;
 		
-		informationEmise = new Information<Double>();
+		informationEmise = new Information<Double>(informationRecue.nbElements());
 		
 		if(forme.equalsIgnoreCase("NRZ")) {
 			

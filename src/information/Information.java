@@ -20,8 +20,13 @@ package information;
       public Information() {
          this.content = new ArrayList<T> (); 
       }
-   
-   	
+   /**
+    * Pour construire un information vide avec une taille prédéfinie
+    */
+ 
+      public Information(int taille) {
+          this.content = new ArrayList<T> (taille); 
+       }
    
    /**
     * pour construire à partir d'un tableau de T une information

@@ -23,7 +23,7 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Double,Double> {
 	 */
 	public TransmetteurAnalogiqueBruite(double snr) throws TransmetteurAnalogiqueBruiteNonConforme {
 		super();
-		informationEmise = new Information<Double>();
+		
 		this.snr = Math.pow(10, snr/10);
 		
 		if(this.snr <= 0) {
@@ -47,6 +47,7 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Double,Double> {
 		}
 
 		this.informationRecue = information;
+		informationEmise = new Information<Double>(informationRecue.nbElements());
 		
 		double puissanceSignalMoyen = 0.0f;
 		
