@@ -6,7 +6,7 @@ import java.util.Random;
 import visualisations.SondeAnalogiqueHistogramme;
 
 
-public class Hitograme {
+public class Histogramme {
 
 	/**
 	 * @param args
@@ -46,7 +46,7 @@ public class Hitograme {
 		
 		for (float val : valeur)
 		{
-			int indice = Math.round(val/interval);
+			int indice = Math.round((val-min)/interval);
 			histo.setIemeElement(indice, histo.iemeElement(indice) + 1);
 		}
 		
