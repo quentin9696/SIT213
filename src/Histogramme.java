@@ -36,17 +36,26 @@ public class Histogramme {
 				min = valeur.get(i);
 			}
 			
+			
 			if(max < valeur.get(i)) {
 				max = valeur.get(i);
 			}
 		}
-
+		//initialisation histogramme
+		for (int i = 0; i<50; i++)
+		{
+			histo.add(0.f);	
+		}
 		
+		//Intervalle séparant deux colonnes de l'histo
 		float interval = (max - min)/50;
 		
+		//Répartition des valeurs du bruit dans les buckets
 		for (float val : valeur)
 		{
 			int indice = Math.round((val-min)/interval);
+			if (indice == 50)
+				indice --;
 			histo.setIemeElement(indice, histo.iemeElement(indice) + 1);
 		}
 		
