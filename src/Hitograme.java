@@ -1,5 +1,9 @@
+import information.Information;
+
 import java.util.LinkedList;
 import java.util.Random;
+
+import visualisations.SondeAnalogiqueHistogramme;
 
 
 public class Hitograme {
@@ -10,7 +14,9 @@ public class Hitograme {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
+		SondeAnalogiqueHistogramme sondeHisto =  new SondeAnalogiqueHistogramme("Histogramme de merde !");
 		float sigma = 1;
+		Information<Float> histo = new Information<Float>();
 		LinkedList<Float> valeur = new LinkedList<>();
 		
 		//Déclaraion de 2 loi uniforme
@@ -35,16 +41,16 @@ public class Hitograme {
 			}
 		}
 
-		float[][] histo = new float[50][2];
 		
-		float interval = (max - min )/50;
+		float interval = (max - min)/50;
 		
-		for(int i=0; i<50; i++) {
-			histo[i][0] = min + (i*interval);
-			System.out.println(histo[i][0]);
+		for (float val : valeur)
+		{
+			int indice = Math.round(val/interval);
+			histo.setIemeElement(indice, histo.iemeElement(indice) + 1);
 		}
 		
-		
+		sondeHisto.recevoir(histo);
 	}
 
 }
