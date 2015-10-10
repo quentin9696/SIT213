@@ -94,7 +94,7 @@ public class RecepteurAnalogique extends Transmetteur<Double, Boolean> {
 		}
 
 		this.informationRecue = information;
-		this.informationEmise = new Information<Boolean>();
+		this.informationEmise = new Information<Boolean>(informationRecue.nbElements());
 		int j = 0;
 		int i = 0;
 		double somme = 0;
