@@ -16,7 +16,7 @@ public class Histogramme {
 		
 		SondeAnalogiqueHistogramme sondeHisto =  new SondeAnalogiqueHistogramme("Histogramme");
 		float sigma = 1;
-		Information<Float> histo = new Information<Float>(100);
+		Information<Integer> histo = new Information<Integer>(100);
 		ArrayList<Float> valeur = new ArrayList<>(30*1000000);
 		
 		//Déclaraion de 2 loi uniforme
@@ -47,7 +47,7 @@ public class Histogramme {
 		//initialisation histogramme
 		for (int i = 0; i<100; i++)
 		{
-			histo.add(0.f);	
+			histo.add(0);	
 		}
 		
 		//Intervalle séparant deux colonnes de l'histo

@@ -8,7 +8,7 @@
  * Classe réalisant l'affichage d'information composée d'éléments réels (float)
  * @author prou
  */
-   public class SondeAnalogiqueHistogramme extends Sonde <Float> {
+   public class SondeAnalogiqueHistogramme extends Sonde <Integer> {
     
    
     /**
@@ -20,7 +20,7 @@
       }
    
    
-      public void recevoir (Information <Float> information) { 
+      public void recevoir (Information <Integer> information) { 
          informationRecue = information;
          int nbElements = information.nbElements();
          double [] table = new double[nbElements];
