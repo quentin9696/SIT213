@@ -9,10 +9,10 @@ import visualisations.SondeAnalogiqueHistogramme;
 public class Histogramme {
 
 	/**
-	 * @param args
+	 * Méthode main qui génère la densité de probabilité du bruit généré par la classe TransmetteurAnalogiqueBruite
+	 * @param args aucun argument n'est requis
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		
 		SondeAnalogiqueHistogramme sondeHisto =  new SondeAnalogiqueHistogramme("Histogramme");
 		float sigma = 1;
@@ -28,6 +28,8 @@ public class Histogramme {
 			valeur.add((float) (sigma*Math.sqrt(-2*Math.log(1-a1.nextFloat()))*Math.cos(2*Math.PI*a2.nextFloat())));
 		}
 		
+		
+		// Récupération du min et max pour faire l'histogramme
 		float max = valeur.get(0); 
 		float min = valeur.get(0);
 		
@@ -41,6 +43,7 @@ public class Histogramme {
 				max = valeur.get(i);
 			}
 		}
+		
 		//initialisation histogramme
 		for (int i = 0; i<100; i++)
 		{
@@ -59,6 +62,7 @@ public class Histogramme {
 			histo.setIemeElement(indice, histo.iemeElement(indice) + 1);
 		}
 		
+		// Affichage 
 		sondeHisto.recevoir(histo);
 	}
 
