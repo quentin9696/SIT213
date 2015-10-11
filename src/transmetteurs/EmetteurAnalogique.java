@@ -407,11 +407,23 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 		}
 		else if(forme.equalsIgnoreCase("RZ")) {
 
+			Double sigma = (double) (nbEch/18);
+			Double csteMax = 1/(sigma*Math.sqrt(2*Math.PI)) * max;
+			Double csteMin = 1/(sigma*Math.sqrt(2*Math.PI)) * min;
+			
+			Double moyenneSurSigma = nbEch/(2*sigma);
+			
+			//Double centre = (double) (nbEch/2);
+			
 			for(Boolean b : informationRecue) {
 				
 				for(int i=0;i<nbEch; i++) {
 					if(b) { // Si le bit est 1 
-						if(i< nbEch * 1/3) { // Reste à 0 de 0 à 1/3
+						
+						Double valeur = csteMax * Math.exp(-0.5 * Math.pow(((i/sigma)-moyenneSurSigma), 2));
+						informationEmise.add(valeur);
+						
+						/*if(i< nbEch * 1/3) { // Reste à 0 de 0 à 1/3
 							informationEmise.add(0.0);
 						}
 						if(i>= nbEch * 1/3 && i< nbEch * 2/3) { // On reste au max sur 1/3 à 2/3 
@@ -419,11 +431,11 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 						}
 						if(i >= (nbEch * 2/3)) { //Reste à 0 de 2/3 à 1
 							informationEmise.add(0.0);
-						}
+						}*/
 			
 					}
 					else { //si le bit est 0
-						if(i< nbEch * 1/3) { //on rste à 0 sur 0 à 1/3
+						/*if(i< nbEch * 1/3) { //on rste à 0 sur 0 à 1/3
 							informationEmise.add(0.0);
 						}
 						if(i>= nbEch * 1/3 && i< nbEch * 2/3) { // On reste au min sur 1/3 à 2/3 
@@ -431,7 +443,10 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 						}
 						if(i >= (nbEch * 2/3)) { // On reste à 0 sur 2/3 à 1
 							informationEmise.add(0.0);
-						}
+						}*/
+						
+						Double valeur = csteMin * Math.exp(-0.5 * Math.pow(((i/sigma)-moyenneSurSigma), 2));
+						informationEmise.add(valeur);
 						
 					}
 				}
