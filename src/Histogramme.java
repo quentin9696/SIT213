@@ -33,14 +33,14 @@ public class Histogramme {
 		float max = valeur.get(0); 
 		float min = valeur.get(0);
 		
-		for(int i=0; i<valeur.size(); i++) {
-			if(min > valeur.get(i)) {
-				min = valeur.get(i);
+		for(float val : valeur) {
+			if(min > val) {
+				min = val;
 			}
 			
 			
-			if(max < valeur.get(i)) {
-				max = valeur.get(i);
+			if(max < val) {
+				max = val;
 			}
 		}
 		
