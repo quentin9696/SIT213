@@ -219,12 +219,12 @@ import java.io.PrintWriter;
                i++; 
             	// traiter la valeur associee
                messageString = args[i];
-               /*if (args[i].matches("[0,1]{7,}")) {
+               if (args[i].matches("[0,1]{7,}")) {
                   messageAleatoire = false;
                   nbBitsMess = args[i].length();
                } 
-               else if (args[i].matches("[0-9]{1,6}")) {*/
-               if (args[i].matches("[0-9]{1,}")) {
+               else if (args[i].matches("[0-9]{1,6}")) {
+               //if (args[i].matches("[0-9]{1,}")) {
                   messageAleatoire = true;
                   nbBitsMess = new Integer(args[i]);
                   if (nbBitsMess < 1) 
@@ -254,7 +254,7 @@ import java.io.PrintWriter;
                       throw new ArgumentsException("Valeur du parametre -nbEch  invalide :" + args[i]);
                 }
         	    
-        	    if(nbEch < 1) {
+        	    if(nbEch < 10) {
         	    	throw new ArgumentsException("Valeur du parametre -nbEch  invalide :" + nbEch);
         	    }
                   
@@ -295,7 +295,7 @@ import java.io.PrintWriter;
                 catch (Exception e) {
                        throw new ArgumentsException("Valeur du parametre -snr  invalide :" + args[i]);
                 }
-         	   System.out.println("snr : " + snr);
+         	   	
          	   avecBruit = true; 
             }
                                    
@@ -358,7 +358,7 @@ import java.io.PrintWriter;
 
     	  
     	  // Compte le nb d'erreur
-    	  // Utilisation des itérateurs parce que c'est la vie <3
+    	  // Utilisation des itérateurs 
     	  Iterator<Boolean> iterateurSource = infoSource.iterator();
     	  Iterator<Boolean> iterateurDest = infoRecu.iterator();
     	  
@@ -371,8 +371,8 @@ import java.io.PrintWriter;
     		  }
     	  }
     	  
-    	  System.out.println("Nb emis : " + infoSource.nbElements());
-    	  System.out.println("Nb reçu : " + infoRecu.nbElements());
+    	  //System.out.println("Nb emis : " + infoSource.nbElements());
+    	  //System.out.println("Nb reçu : " + infoRecu.nbElements());
     	  
     	  // Calcul du TEB 
     	  return  nbErreurs/nbTotal;
@@ -396,8 +396,10 @@ import java.io.PrintWriter;
                System.out.println(e); 
                System.exit(-1);
             } 
-      	Scanner scan = new Scanner(System.in);
-      	scan.next();
+      	
+        // Pour l'utilisation du profiler
+        /*Scanner scan = new Scanner(System.in);
+      	scan.next();*/
       	
          try {
             simulateur.execute();
