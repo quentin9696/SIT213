@@ -92,12 +92,15 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 			
 			if(informationRecue.nbElements()<2) {
 				
-				double prec = 0.0f;
+				double moyenne = (max+min)/2;
+				double coefMax = max - moyenne;
+				double coefMin = moyenne - min;
+				double prec = moyenne;
 				
 				if(informationRecue.iemeElement(0)) { // Si l'unique bit est 1
 					for(int i=0; i<nbEch; i++) {
 						if(i<nbEch * 1/3) {
-							prec += (3*max/nbEch);
+							prec += (3*coefMax/nbEch);
 							informationEmise.add(prec);
 						}
 						if(i>nbEch * 1/3 && i<nbEch*2/3) {
@@ -105,7 +108,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 							informationEmise.add(max);
 						}
 						if(i> nbEch * 2/3) {
-							prec -= (3*max/nbEch);
+							prec -= (3*coefMax/nbEch);
 							informationEmise.add(prec);
 						}
 					}
@@ -114,7 +117,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 				{
 					for(int i=0; i<nbEch; i++) {
 						if(i<nbEch * 1/3) {
-							prec += (3*min/nbEch);
+							prec -= (3*Math.abs(coefMin)/nbEch);
 							informationEmise.add(prec);
 						}
 						if(i>nbEch * 1/3 && i<nbEch*2/3) {
@@ -122,7 +125,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 							informationEmise.add(min);
 						}
 						if(i> nbEch * 2/3) {
-							prec -= (3*min/nbEch);
+							prec += (3*Math.abs(coefMin)/nbEch);
 							informationEmise.add(prec);
 						}
 					}
@@ -148,21 +151,12 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 				
 				for(boolean b : informationRecue) {
 					
-					/*if(i<(informationRecue.nbElements()-1)) {
-						//bitSuivant = informationRecue.iemeElement(i+1);
-						bitSuivant = iterator.next();
-					}*/
-					
 					if(iterator.hasNext()) {
 						bitSuivant = iterator.next();
 					}
 					
 					prec = moyenne;
-					
-					if(i == 0) {
-						 prec = 0.0;
-					 }
-					//TODO FAIRE LES NRZT QUI COMMENCE A LA VALEUR MOYENNE !!! 
+				
 					for(int j=0;j<nbEch; j++) {
 						
 						if(b) { // Si le bit est 1
@@ -170,7 +164,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 							// Si premier bit on le démarre de 0
 							if(i == 0) {
 								if(j<nbEch/3) {
-									prec += (3*max/nbEch);
+									prec += (3*coefMax/nbEch);
 									informationEmise.add(prec);
 								}
 								if(j>= nbEch/3 && j<nbEch*5/6) {
@@ -271,7 +265,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 									}
 								}
 								if(j>=nbEch * 2/3) { // On descend de 2/3 à 1
-									prec -= 3*max/nbEch;
+									prec -= 3*coefMax/nbEch;
 									informationEmise.add(prec);
 								}
 							}
@@ -283,10 +277,10 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 								
 								if(j<nbEch/3) {
 									if(min > 0) {
-										prec += 3*Math.abs(min)/nbEch;
+										prec += 3*Math.abs(coefMin)/nbEch;
 									}
 									else {
-										prec -= 3*Math.abs(min)/nbEch;
+										prec -= 3*Math.abs(coefMin)/nbEch;
 									}
 									
 									informationEmise.add(prec);
@@ -391,10 +385,10 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 								
 								if(j>=nbEch * 2/3) { // de 2/3 à 1 on remonte 
 									if(min > 0) {
-										prec -= 3*Math.abs(min)/nbEch;
+										prec -= 3*Math.abs(coefMin)/nbEch;
 									}
 									else {
-										prec += 3*Math.abs(min)/nbEch;
+										prec += 3*Math.abs(coefMin)/nbEch;
 									}
 									informationEmise.add(prec);
 								}
