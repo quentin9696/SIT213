@@ -51,18 +51,22 @@ import java.io.PrintWriter;
       
       private 			boolean avecBruit = false;
       private 			double snr = 0.0f;
-   
-   
+      
+      private			boolean avecMultiTrajet = false;
+      private 			int dt = 0;
+      private			double ar = 1.0;
    	
    /** le  composant Source de la chaine de transmission */
       private			  Source <Boolean>  source = null;
+      
+      private			Transmetteur<Double, Double> transmetteurMultiTrajet = null;
       
       private			Transmetteur<Boolean, Double> emetteur = null;
       
    /** le  composant Transmetteur parfait logique de la chaine de transmission */
       private			  Transmetteur <Boolean, Boolean>  transmetteurLogique = null;
       private			  Transmetteur<Double, Double>  transmetteurAnalogique = null;
-      private			  Transmetteur <Double, Double>  transmetteurAnalogiqueBruite = null;
+      //private			  Transmetteur <Double, Double>  transmetteurAnalogiqueBruite = null;
       
       private			Transmetteur<Double, Boolean> recepteur = null;
    /** le  composant Destination de la chaine de transmission */
@@ -77,9 +81,10 @@ import java.io.PrintWriter;
    * @throws ArgumentsException si un des arguments est incorrect
    * @throws EmetteurNonConforme l'emetteur n'est pas correct  
  * @throws TransmetteurAnalogiqueBruiteNonConforme 
+ * @throws TransmetteurAnalogiqueMultiTrajetNonConforme 
    *
    */   
-      public  Simulateur(String [] args) throws ArgumentsException, EmetteurNonConforme, RecepteurNonConforme, TransmetteurAnalogiqueBruiteNonConforme {
+      public  Simulateur(String [] args) throws ArgumentsException, EmetteurNonConforme, RecepteurNonConforme, TransmetteurAnalogiqueBruiteNonConforme, TransmetteurAnalogiqueMultiTrajetNonConforme {
       
       	// analyser et rÃ©cupÃ©rer les arguments
       	
@@ -105,12 +110,22 @@ import java.io.PrintWriter;
          emetteur = new EmetteurAnalogique(min, max, forme, nbEch);
          recepteur = new RecepteurAnalogique(min, max, forme, nbEch);
          
+         if(avecMultiTrajet) {
+        	 transmetteurMultiTrajet = new TransmetteurAnalogiqueMultiTrajet(dt, ar);
+         }
+         
          //Transmeteur 
          if(!avecBruit) {
         	 transmetteurAnalogique = new TransmetteurParfaitAnalogique();
          }
          else {
-        	 transmetteurAnalogiqueBruite = new TransmetteurAnalogiqueBruite(snr);
+        	 if(aleatoireAvecGerme) {
+        		 transmetteurAnalogique = new TransmetteurAnalogiqueBruite(snr, seed);
+        	 }
+        	 else {
+        		 transmetteurAnalogique = new TransmetteurAnalogiqueBruite(snr);
+        	 }
+        	 
          }
          
          
@@ -122,20 +137,17 @@ import java.io.PrintWriter;
          
          source.connecter(emetteur);
          
-         if(!avecBruit) {
-        	 emetteur.connecter(transmetteurAnalogique);
-             transmetteurAnalogique.connecter(recepteur);
-         }
-         else {
-        	 emetteur.connecter(transmetteurAnalogiqueBruite);
-             transmetteurAnalogiqueBruite.connecter(recepteur);
-         }
+    	 
+    	 if(avecMultiTrajet) {
+    		 emetteur.connecter(transmetteurMultiTrajet);
+    		 transmetteurMultiTrajet.connecter(transmetteurAnalogique); 
+    	 }
+    	 else {
+    		 emetteur.connecter(transmetteurAnalogique);
+    	 }
+         transmetteurAnalogique.connecter(recepteur);
          
          recepteur.connecter(destination);
-         
-         /*transmetteurLogique = new TransmetteurParfait();
-         source.connecter(transmetteurLogique);
-         transmetteurLogique.connecter(destination);*/
          
          
          // Ajout des sonde si option -s
@@ -145,13 +157,15 @@ import java.io.PrintWriter;
              SondeAnalogique sa1 = new SondeAnalogique("Emetteur");
              SondeAnalogique sa2 = new SondeAnalogique("Recepteur");
              
+             SondeAnalogique sa3 = new SondeAnalogique("Transmetteur");
+             
              source.connecter(sl1);
              emetteur.connecter(sa1);
-             if(!avecBruit) {
-            	 transmetteurAnalogique.connecter(sa2);
-             }
-             else {
-            	 transmetteurAnalogiqueBruite.connecter(sa2);
+             
+             transmetteurAnalogique.connecter(sa2);
+             
+             if(avecMultiTrajet) {
+            	 transmetteurMultiTrajet.connecter(sa3); 
              }
              
              recepteur.connecter(sl2);
@@ -298,7 +312,43 @@ import java.io.PrintWriter;
          	   	
          	   avecBruit = true; 
             }
-                                   
+            else if (args[i].matches("-ti")) {
+         	   	i++; 
+         	   	if(args[i].matches("[1-5]{1}")) {
+         	   	}
+         	   	else {
+         	   		throw new ArgumentsException("Valeur du parametre -ti i invalide :" + args[i]);
+         	   	}
+         	   	
+         	   	i++;
+         	   	
+         	   	if(args[i].matches("[0-9]{1,}")) {
+         	   		try {
+         	   		dt = new Integer(args[i]);
+         	   		}
+         	   		catch(Exception e) {
+         	   			throw new ArgumentsException("Valeur du parametre -ti dt invalide :" + args[i]);
+         	   		}
+         	   	}
+         	   	else {
+         	   		throw new ArgumentsException("Valeur du parametre -ti i dt ar invalide :" + args[i]);
+         	   	}
+         	   	
+         	   	i++;
+         	   	
+		   		try {
+		   			ar = new Double(args[i]);
+		   		}
+		   		catch(Exception e) {
+		   			throw new ArgumentsException("Valeur du parametre -ti ar invalide :" + args[i]);
+		   		}
+		   		
+		   		if(ar<0. && ar > 5.) {
+		   			throw new ArgumentsException("Valeur du parametre -ti ar invalide :" + args[i]);
+		   		}
+         	   	
+		   		avecMultiTrajet = true; 
+            }                     
             else 
             	throw new ArgumentsException("Option invalide :"+ args[i]);
          }
@@ -320,18 +370,13 @@ import java.io.PrintWriter;
 
   			emetteur.emettre();
   			
+  			if(avecMultiTrajet) {
+  				transmetteurMultiTrajet.emettre();
+  			}
   			
-  			if(!avecBruit) {
-  				transmetteurAnalogique.emettre();
-  			}
-  			else {
-  				//emetteur.recyclerRAM();
-  				transmetteurAnalogiqueBruite.emettre();
-  	  			//transmetteurAnalogiqueBruite.recyclerRAM();
-  			}
+  			transmetteurAnalogique.emettre();
   			
   			recepteur.emettre();
-  			//recepteur.recyclerRAM();
   			
   		} catch (InformationNonConforme e) {
   			// TODO Auto-generated catch block

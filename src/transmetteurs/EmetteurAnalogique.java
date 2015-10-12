@@ -160,9 +160,9 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 					prec = moyenne;
 					
 					if(i == 0) {
-						 prec = 0.0f;
+						 prec = 0.0;
 					 }
-					
+					//TODO FAIRE LES NRZT QUI COMMENCE A LA VALEUR MOYENNE !!! 
 					for(int j=0;j<nbEch; j++) {
 						
 						if(b) { // Si le bit est 1
@@ -280,6 +280,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 	
 							// Si premier bit on le démarre de 0
 							if(i == 0) {
+								
 								if(j<nbEch/3) {
 									if(min > 0) {
 										prec += 3*Math.abs(min)/nbEch;

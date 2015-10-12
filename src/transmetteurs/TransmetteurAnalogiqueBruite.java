@@ -15,6 +15,8 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Double,Double> {
 
 	/** Valeur du SNR (linéaire) */
 	private double snr;
+	private long seed;
+	private boolean avecBruit; 
 	
 	/**
 	 * Constructeur d'un transmetteur analogique bruité
@@ -25,6 +27,19 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Double,Double> {
 		super();
 		
 		this.snr = Math.pow(10, snr/10);
+		avecBruit = false;
+		
+		if(this.snr <= 0) {
+			throw new TransmetteurAnalogiqueBruiteNonConforme("SNR strictement positif non nul");
+		}
+	}
+	
+	public TransmetteurAnalogiqueBruite(double snr, long seed) throws TransmetteurAnalogiqueBruiteNonConforme {
+		super();
+		
+		this.snr = Math.pow(10, snr/10);
+		this.seed = seed;
+		avecBruit = true;
 		
 		if(this.snr <= 0) {
 			throw new TransmetteurAnalogiqueBruiteNonConforme("SNR strictement positif non nul");
@@ -63,9 +78,15 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Double,Double> {
 		
 		double sigma = Math.sqrt(puissanceBruitMoyen);
 		
-		//Déclaraion de 2 loi uniforme
 		Random a1 = new Random();
 		Random a2 = new Random();
+		
+		//Déclaraion de 2 loi uniforme
+		if(avecBruit) {
+			a1.setSeed(seed);
+			a2.setSeed(seed);
+		}
+		
 		
 		for(double signal : informationRecue) {
 			//Calcul du bruit et ajout au signal
