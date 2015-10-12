@@ -38,8 +38,7 @@ package information;
             this.content.add(content[i]);
          }
       }
-   
-   
+      
    /**
     * pour connaître le nombre d'éléments d'une information
     * @return le nombre d'éléments de l'information

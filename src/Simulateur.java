@@ -53,8 +53,8 @@ import java.io.PrintWriter;
       private 			double snr = 0.0f;
       
       private			boolean avecMultiTrajet = false;
-      private 			int dt = 0;
-      private			double ar = 1.0;
+      private			ArrayList<Integer> dt = new ArrayList<Integer>(5);
+      private			ArrayList<Double> ar = new ArrayList<Double>(5);
    	
    /** le  composant Source de la chaine de transmission */
       private			  Source <Boolean>  source = null;
@@ -315,6 +315,15 @@ import java.io.PrintWriter;
             else if (args[i].matches("-ti")) {
          	   	i++; 
          	   	if(args[i].matches("[1-5]{1}")) {
+         	   		try {
+         	   			int j = new Integer(args[i]);
+         	   			if(j != dt.size() + 1) {
+         	   				throw new ArgumentsException("Valeur du parametre -ti i invalide :" + args[i]);
+         	   			}
+         	   		}
+         	   		catch(Exception e) {
+         	   			throw new ArgumentsException("Valeur du parametre -ti i invalide :" + args[i]);
+         	   		}
          	   	}
          	   	else {
          	   		throw new ArgumentsException("Valeur du parametre -ti i invalide :" + args[i]);
@@ -324,7 +333,12 @@ import java.io.PrintWriter;
          	   	
          	   	if(args[i].matches("[0-9]{1,}")) {
          	   		try {
-         	   		dt = new Integer(args[i]);
+         	   			int k = new Integer(args[i]);
+         	   			if(k < 0) {
+         	   				throw new ArgumentsException("Valeur du parametre -ti dt invalide :" + args[i]);
+         	   			}
+         	   			
+         	   			dt.add(k);
          	   		}
          	   		catch(Exception e) {
          	   			throw new ArgumentsException("Valeur du parametre -ti dt invalide :" + args[i]);
@@ -337,13 +351,13 @@ import java.io.PrintWriter;
          	   	i++;
          	   	
 		   		try {
-		   			ar = new Double(args[i]);
+		   			double l = new Double(args[i]);
+		   			if(l<0 || l>5) {
+		   				throw new ArgumentsException("Valeur du parametre -ti ar invalide :" + args[i]);
+		   			}
+		   			ar.add(l);
 		   		}
 		   		catch(Exception e) {
-		   			throw new ArgumentsException("Valeur du parametre -ti ar invalide :" + args[i]);
-		   		}
-		   		
-		   		if(ar<0. && ar > 5.) {
 		   			throw new ArgumentsException("Valeur du parametre -ti ar invalide :" + args[i]);
 		   		}
          	   	
@@ -416,8 +430,10 @@ import java.io.PrintWriter;
     		  }
     	  }
     	  
-    	  //System.out.println("Nb emis : " + infoSource.nbElements());
-    	  //System.out.println("Nb reçu : " + infoRecu.nbElements());
+    	  nbErreurs += Math.abs(infoRecu.nbElements() - infoSource.nbElements());
+    	  
+    	  System.out.println("Nb emis : " + infoSource.nbElements());
+    	  System.out.println("Nb reçu : " + infoRecu.nbElements());
     	  
     	  // Calcul du TEB 
     	  return  nbErreurs/nbTotal;
