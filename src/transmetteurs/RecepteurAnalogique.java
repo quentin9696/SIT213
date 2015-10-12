@@ -123,50 +123,25 @@ public class RecepteurAnalogique extends Transmetteur<Double, Boolean> {
 			}
 		} else if (forme.equalsIgnoreCase("NRZT")) // cas NRZT
 		{
-			int nbBits = informationRecue.nbElements()/nbEch;
 			
 			for (double echantillon : informationRecue) {
 				j++;
-				if (i == 0)
-				{
-					if (j > nbEch/3)
+				
 						somme += echantillon;
-				}
-				else if (i == nbBits-1) 
-				{
-					if (j < 2*nbEch/3)
-					somme += echantillon;
-				}
-				else
-				{
-					somme += echantillon;
-				}
-				if (j == nbEch) {
-					if (i == 0)
-					{
-						if (somme / (2*nbEch/3) > esperance) {
-							informationEmise.add(true);
-						} else
-							informationEmise.add(false);
-					}
-					else if (i == nbBits - 1)
-					{
-						if (somme / (2*nbEch/3) > esperance) {
-							informationEmise.add(true);
-						} else
-							informationEmise.add(false);
+				
+						if (j == nbEch) {
+							if (somme / nbEch > esperance) {
+								informationEmise.add(true);
+							} else
+								informationEmise.add(false);
 						
-					}
-					else if (somme / nbEch > esperance) {
-						informationEmise.add(true);
-					} else
-						informationEmise.add(false);
+						
+						j = 0;
+						somme = 0;	
+			}
+				
 
-					j = 0;
-					i++;
-					somme = 0;
-
-				}
+				
 			}
 		} else if (forme.equalsIgnoreCase("NRZ")) { // signal de forme NRZ
 			{
