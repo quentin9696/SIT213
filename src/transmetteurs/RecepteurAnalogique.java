@@ -109,7 +109,7 @@ public class RecepteurAnalogique extends Transmetteur<Double, Boolean> {
 					i++;
 				}
 				if (j == nbEch) {
-					if (somme/i  > esperance) {
+					if (somme  > esperance) {
 						informationEmise.add(true);
 					} else
 						informationEmise.add(false);
