@@ -103,11 +103,8 @@ public class RecepteurAnalogique extends Transmetteur<Double, Boolean> {
 		{
 			for (double echantillon : informationRecue) {
 				j++;
-				if (j >= 1*nbEch/3  && j < 2*nbEch/3)
-				{
 					somme += echantillon;
-					i++;
-				}
+				
 				if (j == nbEch) {
 					if (somme  > esperance) {
 						informationEmise.add(true);
@@ -115,7 +112,6 @@ public class RecepteurAnalogique extends Transmetteur<Double, Boolean> {
 						informationEmise.add(false);
 
 					j = 0;
-					i = 0;
 					somme = 0;
 
 				}

@@ -36,26 +36,44 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 	@Override
 	public void recevoir(Information<Double> information)
 			throws InformationNonConforme {
-		// TODO Auto-generated method stub
-		int nbEch = information.nbElements() - tauMax();
+		// TODO Auto-generated method stub 
 		if(information == null || information.nbElements() == 0) {
 			throw new InformationNonConforme();
+
 		}
-		Information<Double> signalRecu = new Information<Double>(nbEch);
-		for (int i = 0; i < nbEch; i++)
+		
+		int nbEch = information.nbElements() - tauMax();
+		informationEmise = new Information <Double>(nbEch);
+
+
+		System.out.println(nbEch);
+		for (int i = 0; i <tau.size(); i++) 
 		{
-			Double temp = information.iemeElement(i);
-			for (int j=0; j< tau.size(); j++)
-			{
-				int retard = tau.get(j);
-				if (i>retard && i < retard + nbEch)
+			
+				int delta = tau.get(i);
+				double att = alpha.get(i);
+				if (delta < nbEch)
 				{
-					temp -= information.iemeElement(i-retard) * alpha.get(j);
+					for (int j = delta; j < nbEch; j++)
+					{
+					information.setIemeElement(j, information.iemeElement(j) - att*information.iemeElement(j-delta));	
+		
+						
+					}
+	/*				for (int j = 0; j < nbEch; j++)
+					{
+						if (j>=delta)
+						information.setIemeElement(j, information.iemeElement(j) - att*information.iemeElement(j-delta));	
+					}*/
 					
 				}
 				
-			}
-			informationEmise.add(temp);
+				for(double val : information)
+				{
+					informationEmise.add(val);
+				}
+				
+			
 		}
 		this.emettre();
 		
