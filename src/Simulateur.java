@@ -60,6 +60,8 @@ import java.io.PrintWriter;
       private			  Source <Boolean>  source = null;
       
       private			Transmetteur<Double, Double> transmetteurMultiTrajet = null;
+      private			Transmetteur<Double, Double> recepteurMultiTrajet = null;
+
       
       private			Transmetteur<Boolean, Double> emetteur = null;
       
@@ -82,9 +84,10 @@ import java.io.PrintWriter;
    * @throws EmetteurNonConforme l'emetteur n'est pas correct  
  * @throws TransmetteurAnalogiqueBruiteNonConforme 
  * @throws TransmetteurAnalogiqueMultiTrajetNonConforme 
+ * @throws RecepteurAnalogiqueMultiTrajetNonConforme 
    *
    */   
-      public  Simulateur(String [] args) throws ArgumentsException, EmetteurNonConforme, RecepteurNonConforme, TransmetteurAnalogiqueBruiteNonConforme, TransmetteurAnalogiqueMultiTrajetNonConforme {
+      public  Simulateur(String [] args) throws ArgumentsException, EmetteurNonConforme, RecepteurNonConforme, TransmetteurAnalogiqueBruiteNonConforme, TransmetteurAnalogiqueMultiTrajetNonConforme, RecepteurAnalogiqueMultiTrajetNonConforme {
       
       	// analyser et rÃ©cupÃ©rer les arguments
       	
@@ -112,6 +115,8 @@ import java.io.PrintWriter;
          
          if(avecMultiTrajet) {
         	 transmetteurMultiTrajet = new TransmetteurAnalogiqueMultiTrajet(dt, ar);
+        	 recepteurMultiTrajet = new RecepteurAnalogiqueMultiTrajet(dt, ar);
+
          }
          
          //Transmeteur 
@@ -140,12 +145,15 @@ import java.io.PrintWriter;
     	 
     	 if(avecMultiTrajet) {
     		 emetteur.connecter(transmetteurMultiTrajet);
-    		 transmetteurMultiTrajet.connecter(transmetteurAnalogique); 
+    		 transmetteurMultiTrajet.connecter(transmetteurAnalogique);
+    		 transmetteurAnalogique.connecter(recepteurMultiTrajet);
+    		 recepteurMultiTrajet.connecter(recepteur);
     	 }
     	 else {
     		 emetteur.connecter(transmetteurAnalogique);
+             transmetteurAnalogique.connecter(recepteur);
+
     	 }
-         transmetteurAnalogique.connecter(recepteur);
          
          recepteur.connecter(destination);
          
