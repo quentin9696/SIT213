@@ -183,7 +183,6 @@ public class RecepteurAnalogique extends Transmetteur<Double, Boolean> {
 				}
 			}
 		}
-
 	}
 
 	/**

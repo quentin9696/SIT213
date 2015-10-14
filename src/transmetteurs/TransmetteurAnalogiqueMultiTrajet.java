@@ -45,6 +45,7 @@ public class TransmetteurAnalogiqueMultiTrajet extends Transmetteur<Double, Doub
 		int tauMax = this.tauMax();
 		
 		informationRecue = information;
+		//informationEmise = informationRecue;
 		informationEmise = new Information<Double>(informationRecue.nbElements() + tauMax);
 		
 		for(int i = 0; i<(informationRecue.nbElements() + tauMax); i++) {
@@ -56,15 +57,18 @@ public class TransmetteurAnalogiqueMultiTrajet extends Transmetteur<Double, Doub
 			}
 		}
 		
-		/*System.out.println("Nb recu : " + informationRecue.nbElements());
-		System.out.println("Nb emis : " + informationEmise.nbElements() );*/
-		
 		int j=0;
 		for(int val : tau) {
 			
 			for(int i=0; i<=informationEmise.nbElements(); i++) {	
 				if(i>=val && i<informationRecue.nbElements() + val) {
-					informationEmise.setIemeElement(i, (informationEmise.iemeElement(i) + (alpha.get(j)*informationRecue.iemeElement(i-val))));
+					
+					double valeurPrec = informationEmise.iemeElement(i);
+					double bruitMultiTrajet = informationRecue.iemeElement(i-val);
+					bruitMultiTrajet *= alpha.get(j);
+					
+					valeurPrec += bruitMultiTrajet;
+					informationEmise.setIemeElement(i, valeurPrec);
 				}
 			}
 			

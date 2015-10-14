@@ -145,8 +145,12 @@ import java.io.PrintWriter;
     	 
     	 if(avecMultiTrajet) {
     		 emetteur.connecter(transmetteurMultiTrajet);
+    		 //transmetteurMultiTrajet.connecter(recepteurMultiTrajet);
     		 transmetteurMultiTrajet.connecter(transmetteurAnalogique);
+
     		 transmetteurAnalogique.connecter(recepteurMultiTrajet);
+    		 //transmetteurAnalogique.connecter(recepteur);
+    		 
     		 recepteurMultiTrajet.connecter(recepteur);
     	 }
     	 else {
@@ -160,13 +164,13 @@ import java.io.PrintWriter;
          
          // Ajout des sonde si option -s
          if(affichage) {
-        	 SondeLogique sl1 = new SondeLogique("1", 150);
-             SondeLogique sl2 = new SondeLogique("6", 150);
-             SondeAnalogique sa1 = new SondeAnalogique("2");
-             SondeAnalogique sa2 = new SondeAnalogique("4");
+        	 SondeLogique sl1 = new SondeLogique("Source", 150);
+             SondeLogique sl2 = new SondeLogique("Destination", 150);
+             SondeAnalogique sa1 = new SondeAnalogique("Sortie Emetteur");
+             SondeAnalogique sa2 = new SondeAnalogique("Sortie Transmetteur Analogique");
              
-             SondeAnalogique sa3 = new SondeAnalogique("3");
-             SondeAnalogique sa4 = new SondeAnalogique("5");
+             SondeAnalogique sa3 = new SondeAnalogique("Sortie transmetteur multi-trajet");
+             SondeAnalogique sa4 = new SondeAnalogique("Sortie Recepteur multi-trajet");
 
              
              source.connecter(sl1);
@@ -401,6 +405,10 @@ import java.io.PrintWriter;
   			
   			transmetteurAnalogique.emettre();
   			
+  			if(avecMultiTrajet) {
+  				recepteurMultiTrajet.emettre();
+  			}
+  			
   			recepteur.emettre();
   			
   		} catch (InformationNonConforme e) {
@@ -443,8 +451,8 @@ import java.io.PrintWriter;
     	  
     	  nbErreurs += Math.abs(infoRecu.nbElements() - infoSource.nbElements());
     	  
-    	  System.out.println("Nb emis : " + infoSource.nbElements());
-    	  System.out.println("Nb reçu : " + infoRecu.nbElements());
+    	  /*System.out.println("Nb emis : " + infoSource.nbElements());
+    	  System.out.println("Nb reçu : " + infoRecu.nbElements());*/
     	  
     	  // Calcul du TEB 
     	  return  nbErreurs/nbTotal;

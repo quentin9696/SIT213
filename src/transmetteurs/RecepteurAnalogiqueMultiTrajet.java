@@ -1,12 +1,13 @@
 package transmetteurs;
 
+import java.awt.ItemSelectable;
 import java.util.ArrayList;
 
 import destinations.DestinationInterface;
 import information.Information;
 import information.InformationNonConforme;
 
-public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>{
+public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double> {
 
 
 	private ArrayList<Integer> tau;
@@ -43,28 +44,38 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 		}
 		
 		int nbEch = information.nbElements() - tauMax();
+		informationRecue = information;
 		informationEmise = new Information <Double>(nbEch);
 
 
-		System.out.println(nbEch);
+		Information<Double> infoTemp = new Information<Double>();
+		
+		//  NE PAS TOUCHER ! ET UTILISER infoTemp !! MERCI POUR MES NEURONNES :D 
+		
+		for(double val : informationRecue) {
+			infoTemp.add(val);
+		}
+		
 		
 		for (int i = 0; i < nbEch; i++)
 		{
-			double temp = information.iemeElement(i);
+			double temp = informationRecue.iemeElement(i);
 			//System.out.println("before : " + temp);
 			for (int j = 0; j < tau.size(); j++)
 			{
 				int delta = tau.get(j);
-				if (i>= delta && delta < nbEch)
+				//if (i>= delta && delta < nbEch)
+				if (i>= delta)
 				{
 					//System.out.println(alpha.get(j) + "val" + information.iemeElement(i-delta));
-					temp -= alpha.get(j)*information.iemeElement(i-delta);
+					temp -= alpha.get(j)*infoTemp.iemeElement(i-delta);
 					
 				}
 				//System.out.println(temp);
 			}
-			information.setIemeElement(i, temp);
+			infoTemp.setIemeElement(i, temp);
 		}
+		
 		
 		/*for (int i = 0; i <tau.size(); i++) 
 		{
@@ -88,18 +99,17 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 				}*/
 				for(int k = 0; k < nbEch; k++)
 				{
-					informationEmise.add(information.iemeElement(k));
+					informationEmise.add(infoTemp.iemeElement(k));
 				}
 				
-		
-		this.emettre();
+				/*System.out.println("Nb ech recu : " + informationRecue.nbElements());
+				System.out.println("Nb ech emis : " + informationEmise.nbElements() );*/
 		
 			}
 
 	@Override
 	public void emettre() throws InformationNonConforme {
 		// TODO Auto-generated method stub
-		System.out.println(informationEmise.nbElements());
 
 		for (DestinationInterface<Double> destinationConnectee : destinationsConnectees) {
 			destinationConnectee.recevoir(informationEmise);

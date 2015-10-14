@@ -27,7 +27,6 @@ public class TransmetteurParfaitAnalogique extends Transmetteur<Double,Double> {
 
 		this.informationRecue = information;
 		this.informationEmise = informationRecue;
-		
 	}
 	
 	/**
