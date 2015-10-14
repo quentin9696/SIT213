@@ -47,7 +47,26 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 
 
 		System.out.println(nbEch);
-		for (int i = 0; i <tau.size(); i++) 
+		
+		for (int i = 0; i < nbEch; i++)
+		{
+			double temp = information.iemeElement(i);
+			//System.out.println("before : " + temp);
+			for (int j = 0; j < tau.size(); j++)
+			{
+				int delta = tau.get(j);
+				if (i>= delta && delta < nbEch)
+				{
+					//System.out.println(alpha.get(j) + "val" + information.iemeElement(i-delta));
+					temp -= alpha.get(j)*information.iemeElement(i-delta);
+					
+				}
+				//System.out.println(temp);
+			}
+			information.setIemeElement(i, temp);
+		}
+		
+		/*for (int i = 0; i <tau.size(); i++) 
 		{
 			
 				int delta = tau.get(i);
@@ -64,17 +83,15 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 					{
 						if (j>=delta)
 						information.setIemeElement(j, information.iemeElement(j) - att*information.iemeElement(j-delta));	
-					}*/
+					}
 					
-				}
-				
-				for(double val : information)
+				}*/
+				for(int k = 0; k < nbEch; k++)
 				{
-					informationEmise.add(val);
+					informationEmise.add(information.iemeElement(k));
 				}
 				
-			
-		}
+		
 		this.emettre();
 		
 			}
@@ -82,6 +99,8 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 	@Override
 	public void emettre() throws InformationNonConforme {
 		// TODO Auto-generated method stub
+		System.out.println(informationEmise.nbElements());
+
 		for (DestinationInterface<Double> destinationConnectee : destinationsConnectees) {
 			destinationConnectee.recevoir(informationEmise);
 		}

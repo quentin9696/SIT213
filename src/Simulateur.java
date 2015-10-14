@@ -160,12 +160,14 @@ import java.io.PrintWriter;
          
          // Ajout des sonde si option -s
          if(affichage) {
-        	 SondeLogique sl1 = new SondeLogique("Source", 150);
-             SondeLogique sl2 = new SondeLogique("Destination", 150);
-             SondeAnalogique sa1 = new SondeAnalogique("Emetteur");
-             SondeAnalogique sa2 = new SondeAnalogique("Recepteur");
+        	 SondeLogique sl1 = new SondeLogique("1", 150);
+             SondeLogique sl2 = new SondeLogique("6", 150);
+             SondeAnalogique sa1 = new SondeAnalogique("2");
+             SondeAnalogique sa2 = new SondeAnalogique("4");
              
-             SondeAnalogique sa3 = new SondeAnalogique("Transmetteur");
+             SondeAnalogique sa3 = new SondeAnalogique("3");
+             SondeAnalogique sa4 = new SondeAnalogique("5");
+
              
              source.connecter(sl1);
              emetteur.connecter(sa1);
@@ -173,7 +175,8 @@ import java.io.PrintWriter;
              transmetteurAnalogique.connecter(sa2);
              
              if(avecMultiTrajet) {
-            	 transmetteurMultiTrajet.connecter(sa3); 
+            	 transmetteurMultiTrajet.connecter(sa3);
+            	 recepteurMultiTrajet.connecter(sa4);
              }
              
              recepteur.connecter(sl2);

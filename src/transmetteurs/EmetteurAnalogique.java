@@ -457,7 +457,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean,Double> {
 		
 	@Override
 	public void emettre() throws InformationNonConforme {
-		
+		System.out.println(informationEmise.nbElements());
 		for (DestinationInterface<Double> destinationConnectee : destinationsConnectees) {
             destinationConnectee.recevoir(informationEmise);
          }
