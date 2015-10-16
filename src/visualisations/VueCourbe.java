@@ -17,7 +17,7 @@
     
       private static final long serialVersionUID = 1917L;
    
-      private Point2D.Float [] coordonnees;
+      private Point2D.Double [] coordonnees;
       private double yMax = 0;
       private double yMin = 0;
    	
@@ -30,20 +30,20 @@
          int yPosition = Vue.getYPosition();
          setLocation(xPosition, yPosition);
       	
-         this.coordonnees = new Point2D.Float [(2 * valeurs.length) + 1];
+         this.coordonnees = new Point2D.Double [(2 * valeurs.length) + 1];
          yMax = 1;
          yMin = 0;
       	
-         coordonnees[0] = new Point2D.Float(0, 0);
+         coordonnees[0] = new Point2D.Double(0, 0);
       	
          for (int i = 0, j = 0; i < valeurs.length; i++, j+= 2) {
             if (valeurs[i]) {
-               coordonnees[j+1] = new Point2D.Float(i, 1);
-               coordonnees[j+2] = new Point2D.Float(i+1, 1);
+               coordonnees[j+1] = new Point2D.Double(i, 1);
+               coordonnees[j+2] = new Point2D.Double(i+1, 1);
             }
             else {
-               coordonnees[j+1] = new Point2D.Float(i, 0);
-               coordonnees[j+2] = new Point2D.Float(i+1, 0);
+               coordonnees[j+1] = new Point2D.Double(i, 0);
+               coordonnees[j+2] = new Point2D.Double(i+1, 0);
             }
          }
       
@@ -53,7 +53,7 @@
             largeur = 1000;
          setSize(largeur, 200);
          setVisible(true);  
-         paint();
+         repaint();
       }
    
    
@@ -65,7 +65,7 @@
          int yPosition = Vue.getYPosition();
          setLocation(xPosition, yPosition);
       
-         this.coordonnees = new Point2D.Float [valeurs.length];
+         this.coordonnees = new Point2D.Double [valeurs.length];
          yMax = 0;
          yMin = 0;
       	
@@ -74,7 +74,7 @@
                yMax = valeurs[i];
             if (valeurs[i] < yMin)
                yMin = valeurs[i];
-            coordonnees[i] = new Point2D.Float(i, (float) valeurs[i]);
+            coordonnees[i] = new Point2D.Double(i, valeurs[i]);
          }
       
          setDefaultCloseOperation(EXIT_ON_CLOSE);  
@@ -83,26 +83,26 @@
             largeur = 1000;
          setSize(largeur, 200);
          setVisible(true);  
-         paint();
+         repaint();
       }
    
    
       public  void changer (boolean [] valeurs) {   
              	
-         this.coordonnees = new Point2D.Float [(2 * valeurs.length) + 1];
+         this.coordonnees = new Point2D.Double [(2 * valeurs.length) + 1];
          yMax = 1;
          yMin = 0;
       	
-         coordonnees[0] = new Point2D.Float(0, 0);
+         coordonnees[0] = new Point2D.Double(0, 0);
       	
          for (int i = 0, j = 0; i < valeurs.length; i++, j+= 2) {
             if (valeurs[i]) {
-               coordonnees[j+1] = new Point2D.Float(i, 1);
-               coordonnees[j+2] = new Point2D.Float(i+1, 1);
+               coordonnees[j+1] = new Point2D.Double(i, 1);
+               coordonnees[j+2] = new Point2D.Double(i+1, 1);
             }
             else {
-               coordonnees[j+1] = new Point2D.Float(i, 0);
-               coordonnees[j+2] = new Point2D.Float(i+1, 0);
+               coordonnees[j+1] = new Point2D.Double(i, 0);
+               coordonnees[j+2] = new Point2D.Double(i+1, 0);
             }
          }
       
@@ -111,7 +111,7 @@
    
       public  void changer (double [] valeurs) {   
              
-         this.coordonnees = new Point2D.Float [valeurs.length];
+         this.coordonnees = new Point2D.Double [valeurs.length];
          yMax = 0;
          yMin = 0;
       	
@@ -120,10 +120,10 @@
                yMax = valeurs[i];
             if (valeurs[i] < yMin)
                yMin = valeurs[i];
-            coordonnees[i] = new Point2D.Float(i, (float) valeurs[i]);
+            coordonnees[i] = new Point2D.Double(i, valeurs[i]);
          }
       
-         paint();
+        paint();
       }
    
    
@@ -140,16 +140,18 @@
             return;
          }
       	// effacement total
+         
          g.setColor(Color.white);
+         //g.clearRect(0, 0, getWidth(), getHeight());
          g.fillRect(0, 0, getWidth(), getHeight());
          g.setColor(Color.black);
       	
       	
          int x0Axe = 10;
-         double deltaX = getContentPane().getWidth() - (2 * x0Axe);
+         float deltaX = getContentPane().getWidth() - (2 * x0Axe);
       	
          int y0Axe = 10;
-         double deltaY = getContentPane().getHeight() - (2 * y0Axe);      	 
+         float deltaY = getContentPane().getHeight() - (2 * y0Axe);      	 
       	
       	
          if ((yMax > 0) && (yMin <= 0)) {
@@ -172,7 +174,7 @@
       	
       	// tracer la courbe
       
-         double dx =  deltaX / (double) coordonnees[coordonnees.length - 1].getX();
+         double dx =  deltaX / (float) coordonnees[coordonnees.length - 1].getX();
          double dy = 0.0f;
          if ((yMax >= 0) && (yMin <= 0)) {
             dy =  deltaY / (yMax-yMin);
