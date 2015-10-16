@@ -48,28 +48,32 @@ import java.io.PrintWriter;
    /** l'amplitude du signal. Correspond au paramètre -ampl min max */
       private 			double min = 0.0f;
       private			double max = 1.0f;
-      
+   /** indique si le simulateur utilise un canal bruité */
       private 			boolean avecBruit = false;
+   /** valeur du rapport signal a bruit (linéraire) */
       private 			double snr = 0.0f;
       
+   /** indique si le simulateur utilise des multi-trajet */
       private			boolean avecMultiTrajet = false;
+   /**	tableau des retards pour le multitrajet    */
       private			ArrayList<Integer> dt = new ArrayList<Integer>(5);
+      /**	tableau des atténuations pour le multitrajet    */
       private			ArrayList<Double> ar = new ArrayList<Double>(5);
    	
    /** le  composant Source de la chaine de transmission */
       private			  Source <Boolean>  source = null;
-      
+   /** les transmetteurs multi-trajet s'il en a */
       private			Transmetteur<Double, Double> transmetteurMultiTrajet = null;
       private			Transmetteur<Double, Double> recepteurMultiTrajet = null;
 
-      
+   /** le composant emetteur (information logique en information echentillonnée */
       private			Transmetteur<Boolean, Double> emetteur = null;
       
    /** le  composant Transmetteur parfait logique de la chaine de transmission */
       private			  Transmetteur <Boolean, Boolean>  transmetteurLogique = null;
+   /** composant Transmetteur analogique */
       private			  Transmetteur<Double, Double>  transmetteurAnalogique = null;
-      //private			  Transmetteur <Double, Double>  transmetteurAnalogiqueBruite = null;
-      
+      /** le composant recepteur (information echentillonnée en information logique) */
       private			Transmetteur<Double, Boolean> recepteur = null;
    /** le  composant Destination de la chaine de transmission */
       private			  Destination <Boolean>  destination = null;
@@ -98,11 +102,11 @@ import java.io.PrintWriter;
         	 source = new SourceFixe(messageString);
          }
          else {
-	// message avec un seed (et eventuellement une taille
+        	 // message avec un seed (et eventuellement une taille
         	 if(aleatoireAvecGerme){
         		 source = new SourceAleatoire(nbBitsMess, seed);
         	 }
-	// message sans seed (et eventuellement une taille
+        	 // message sans seed (et eventuellement une taille
         	 else {
         		 source = new SourceAleatoire(nbBitsMess);
         	 }
@@ -113,6 +117,7 @@ import java.io.PrintWriter;
          emetteur = new EmetteurAnalogique(min, max, forme, nbEch);
          recepteur = new RecepteurAnalogique(min, max, forme, nbEch);
          
+         // Multi trajet
          if(avecMultiTrajet) {
         	 transmetteurMultiTrajet = new TransmetteurAnalogiqueMultiTrajet(dt, ar);
         	 recepteurMultiTrajet = new RecepteurAnalogiqueMultiTrajet(dt, ar);
@@ -143,22 +148,19 @@ import java.io.PrintWriter;
          source.connecter(emetteur);
          
     	 
+         //On ajout les briques multi-trajet s'il y en a 
     	 if(avecMultiTrajet) {
     		 emetteur.connecter(transmetteurMultiTrajet);
-    		 //transmetteurMultiTrajet.connecter(recepteurMultiTrajet);
     		 transmetteurMultiTrajet.connecter(transmetteurAnalogique);
-
     		 transmetteurAnalogique.connecter(recepteurMultiTrajet);
-    		 //transmetteurAnalogique.connecter(recepteur);
-    		 
     		 recepteurMultiTrajet.connecter(recepteur);
     	 }
     	 else {
     		 emetteur.connecter(transmetteurAnalogique);
              transmetteurAnalogique.connecter(recepteur);
-
     	 }
          
+    	 // Le recepteur est toujours connecté à la destination !
          recepteur.connecter(destination);
          
          
@@ -171,7 +173,6 @@ import java.io.PrintWriter;
              
              SondeAnalogique sa3 = new SondeAnalogique("Sortie transmetteur multi-trajet");
              SondeAnalogique sa4 = new SondeAnalogique("Sortie Recepteur multi-trajet");
-
              
              source.connecter(sl1);
              emetteur.connecter(sa1);
@@ -349,7 +350,7 @@ import java.io.PrintWriter;
          	   	if(args[i].matches("[0-9]{1,}")) {
          	   		try {
          	   			int k = new Integer(args[i]);
-         	   			if(k < 0) {
+         	   			if(k < 1) {
          	   				throw new ArgumentsException("Valeur du parametre -ti dt invalide :" + args[i]);
          	   			}
          	   			
@@ -364,24 +365,37 @@ import java.io.PrintWriter;
          	   	}
          	   	
          	   	i++;
-         	   	
-		   		try {
-		   			double l = new Double(args[i]);
-		   			if(l<0 || l>5) {
-		   				throw new ArgumentsException("Valeur du parametre -ti ar invalide :" + args[i]);
-		   			}
-		   			ar.add(l);
-		   		}
-		   		catch(Exception e) {
-		   			throw new ArgumentsException("Valeur du parametre -ti ar invalide :" + args[i]);
-		   		}
+         	   	if(args[i].matches("[0-1]{1}([.][0-9]*){0,1}")) {
+	         	   	try {
+			   			double l = new Double(args[i]);
+			   			if(l<0 || l>1) {
+			   				throw new ArgumentsException("Valeur du parametre -ti ar invalide :" + args[i]);
+			   			}
+			   			ar.add(1-l);
+			   		}
+			   		catch(Exception e) {
+			   			throw new ArgumentsException("Valeur du parametre -ti ar invalide :" + args[i]);
+			   		}
+         	   	}
+         	   	else {
+         	   		throw new ArgumentsException("Valeur du parametre -ti i dt ar invalide :" + args[i]);
+         	   	}
+		   		
          	   	
 		   		avecMultiTrajet = true; 
             }                     
             else 
             	throw new ArgumentsException("Option invalide :"+ args[i]);
          }
-      
+         
+         double sommeAlpha = 0.;
+         for(double val : ar) {
+        	 sommeAlpha += val;
+         }
+         
+         if(sommeAlpha > 1) {
+        	throw new ArgumentsException("La somme de tous les alphas ne peut dépasser 1"); 
+         }
       }
      
     
@@ -451,9 +465,6 @@ import java.io.PrintWriter;
     	  
     	  nbErreurs += Math.abs(infoRecu.nbElements() - infoSource.nbElements());
     	  
-    	  /*System.out.println("Nb emis : " + infoSource.nbElements());
-    	  System.out.println("Nb reçu : " + infoRecu.nbElements());*/
-    	  
     	  // Calcul du TEB 
     	  return  nbErreurs/nbTotal;
     	  
@@ -477,7 +488,8 @@ import java.io.PrintWriter;
                System.exit(-1);
             } 
       	
-        // Pour l'utilisation du profiler
+        //////// Pour l'utilisation du profiler /////////
+         
         /*Scanner scan = new Scanner(System.in);
       	scan.next();*/
       	

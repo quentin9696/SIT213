@@ -50,8 +50,6 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Double,Double> {
 	 * Méthode permettant de revevoir une information d'ajouter du bruit (blanc gaussien) et de transmettre 
 	 * @param information : L'information (de type double) recue de l'emetteur
 	 * @throws InformationNonConforme : L'information n'est pas conforme (exemple : information null)
-	 * @throws  ez
-	 *
 	*/
 	@Override
 	public void recevoir(Information<Double> information)

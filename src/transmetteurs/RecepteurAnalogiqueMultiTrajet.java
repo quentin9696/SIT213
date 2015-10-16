@@ -31,7 +31,7 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 		this.tau = tau;
 		this.alpha = alpha;
 		
-		if(this.tauMin() < 0) {
+		if(this.tauMin() < 1) {
 			throw new RecepteurAnalogiqueMultiTrajetNonConforme("Le décalage ne peux pas être négatif !");
 		}
 		
@@ -39,6 +39,13 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 			throw new RecepteurAnalogiqueMultiTrajetNonConforme("L'atténuation ne peut pas être négatif ou supérieure à 1");
 		}
 	}
+	
+	/**
+	 * Méthode permettant de recevoir une information d'enlever du multi-trajet et de transmettre 
+	 * @param information : L'information (de type double) recue
+	 * @throws InformationNonConforme : L'information n'est pas conforme (exemple : information null)
+	*/
+	
 	@Override
 	public void recevoir(Information<Double> information)
 			throws InformationNonConforme {
@@ -86,6 +93,12 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 		
 			}
 
+	/**
+     * Méthode permettant d'émettre l'information emise (modifier au préalable par la methode recevoir)
+     * @throws InformationNonConforme : L'information n'est pas conforme
+     *
+    */
+	
 	@Override
 	public void emettre() throws InformationNonConforme {
 		// TODO Auto-generated method stub
@@ -100,6 +113,7 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 		// TODO Auto-generated method stub
 	}
 	
+	//Quelques methodes utiles pour connaitre les valeures min et max des listes 
 	private int tauMax() {
 		int max = tau.get(0);
 		

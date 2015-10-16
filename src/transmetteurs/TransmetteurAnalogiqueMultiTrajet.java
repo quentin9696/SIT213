@@ -8,10 +8,18 @@ import information.InformationNonConforme;
 
 public class TransmetteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>{
 
-
+	/** liste des décalages */
 	private ArrayList<Integer> tau;
+	/** liste des atténuations*/
 	private ArrayList<Double> alpha;
 	
+	/**
+	 * Constructeur pour l'ajout de multi-trajet dans une information reçue
+	 * @param tau la liste décalages des multi-trajets
+	 * @param alpha la liste amplitudes des multi-trajets
+	 * @throws TransmetteurAnalogiqueMultiTrajetNonConforme les paramètres ne sont pas valide : les deux tableaux doivent 
+	 * être compris entre 1 et 5 éléments, ils doivent être de taille identique et la tau doit être supérieur à 1. Alpha compris entre 0 et 1
+	 */
 	public TransmetteurAnalogiqueMultiTrajet(ArrayList<Integer> tau, ArrayList<Double> alpha) throws TransmetteurAnalogiqueMultiTrajetNonConforme {
 			
 		if(tau.size() < 1 || tau.size() > 5 || alpha.size() > 5 || alpha.size() < 1) {
@@ -25,7 +33,7 @@ public class TransmetteurAnalogiqueMultiTrajet extends Transmetteur<Double, Doub
 		this.tau = tau;
 		this.alpha = alpha;
 		
-		if(this.tauMin() < 0) {
+		if(this.tauMin() < 1) {
 			throw new TransmetteurAnalogiqueMultiTrajetNonConforme("Le décalage ne peux pas être négatif !");
 		}
 		
@@ -33,6 +41,12 @@ public class TransmetteurAnalogiqueMultiTrajet extends Transmetteur<Double, Doub
 			throw new TransmetteurAnalogiqueMultiTrajetNonConforme("L'atténuation ne peut pas être négatif ou supérieure à 1");
 		}
 	}
+	
+	/**
+	 * Méthode permettant de recevoir une information d'ajouter du multi-trajet et de transmettre 
+	 * @param information : L'information (de type double) recue
+	 * @throws InformationNonConforme : L'information n'est pas conforme (exemple : information null)
+	*/
 	@Override
 	public void recevoir(Information<Double> information)
 			throws InformationNonConforme {
@@ -42,12 +56,13 @@ public class TransmetteurAnalogiqueMultiTrajet extends Transmetteur<Double, Doub
 			throw new InformationNonConforme();
 		}
 		
+		//Calcul du tau max !
 		int tauMax = this.tauMax();
 		
 		informationRecue = information;
-		//informationEmise = informationRecue;
 		informationEmise = new Information<Double>(informationRecue.nbElements() + tauMax);
 		
+		// Initialisation de l'info qu'on va emettre 
 		for(int i = 0; i<(informationRecue.nbElements() + tauMax); i++) {
 			if(i<informationRecue.nbElements()) {
 				informationEmise.add(informationRecue.iemeElement(i));
@@ -58,6 +73,8 @@ public class TransmetteurAnalogiqueMultiTrajet extends Transmetteur<Double, Doub
 		}
 		
 		int j=0;
+		
+		// Pour chaque valeur de tau, on va rajouter le multi-trajet (décaler de tau)
 		for(int val : tau) {
 			
 			for(int i=0; i<=informationEmise.nbElements(); i++) {	
@@ -68,6 +85,8 @@ public class TransmetteurAnalogiqueMultiTrajet extends Transmetteur<Double, Doub
 					bruitMultiTrajet *= alpha.get(j);
 					
 					valeurPrec += bruitMultiTrajet;
+					
+					// Et on remplace dans l'information à emettre 
 					informationEmise.setIemeElement(i, valeurPrec);
 				}
 			}
@@ -76,6 +95,12 @@ public class TransmetteurAnalogiqueMultiTrajet extends Transmetteur<Double, Doub
 		}
 	}
 
+	/**
+     * Méthode permettant d'émettre l'information emise (modifier au préalable par la methode recevoir)
+     * @throws InformationNonConforme : L'information n'est pas conforme
+     *
+    */
+	
 	@Override
 	public void emettre() throws InformationNonConforme {
 		// TODO Auto-generated method stub
@@ -89,6 +114,8 @@ public class TransmetteurAnalogiqueMultiTrajet extends Transmetteur<Double, Doub
 		// TODO Auto-generated method stub
 	}
 	
+	
+	// Quelques methodes utiles pour connaitre les valeures min et max des listes 
 	private int tauMax() {
 		int max = tau.get(0);
 		
