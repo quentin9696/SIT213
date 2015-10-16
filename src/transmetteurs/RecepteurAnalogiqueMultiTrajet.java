@@ -12,7 +12,12 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 
 	private ArrayList<Integer> tau;
 	private ArrayList<Double> alpha;
-	
+	/** 
+	 * Constructeur initialisant un récépteur multitrajet
+	 * @param tau tableau des décalages
+	 * @param alpha tableau des atténuations
+	 * @throws RecepteurAnalogiqueMultiTrajetNonConforme
+	 */
 	public RecepteurAnalogiqueMultiTrajet(ArrayList<Integer> tau, ArrayList<Double> alpha) throws RecepteurAnalogiqueMultiTrajetNonConforme {
 			
 		if(tau.size() < 1 || tau.size() > 5 || alpha.size() > 5 || alpha.size() < 1) {
@@ -43,7 +48,7 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 
 		}
 		
-		int nbEch = information.nbElements() - tauMax();
+		int nbEch = information.nbElements() - tauMax(); //Calcul du nombre d'échantillons utiles
 		informationRecue = information;
 		informationEmise = new Information <Double>(nbEch);
 
@@ -57,53 +62,27 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 		}
 		
 		
-		for (int i = 0; i < nbEch; i++)
+		for (int i = 0; i < nbEch; i++) //parcours des échantillons significatifs
 		{
 			double temp = informationRecue.iemeElement(i);
-			//System.out.println("before : " + temp);
 			for (int j = 0; j < tau.size(); j++)
 			{
 				int delta = tau.get(j);
-				//if (i>= delta && delta < nbEch)
 				if (i>= delta)
 				{
-					//System.out.println(alpha.get(j) + "val" + information.iemeElement(i-delta));
-					temp -= alpha.get(j)*infoTemp.iemeElement(i-delta);
+					temp -= alpha.get(j)*infoTemp.iemeElement(i-delta); //Si superposition de plusieurs trajets, on soustrait les multitrajets
 					
 				}
-				//System.out.println(temp);
 			}
-			infoTemp.setIemeElement(i, temp);
+			infoTemp.setIemeElement(i, temp); //Valeur "nettoyée" des multi trajets
 		}
 		
 		
-		/*for (int i = 0; i <tau.size(); i++) 
-		{
-			
-				int delta = tau.get(i);
-				double att = alpha.get(i);
-				if (delta < nbEch)
-				{
-					for (int j = delta; j < nbEch; j++)
-					{
-					information.setIemeElement(j, information.iemeElement(j) - att*information.iemeElement(j-delta));	
-		
-						
-					}
-	/*				for (int j = 0; j < nbEch; j++)
-					{
-						if (j>=delta)
-						information.setIemeElement(j, information.iemeElement(j) - att*information.iemeElement(j-delta));	
-					}
-					
-				}*/
 				for(int k = 0; k < nbEch; k++)
 				{
-					informationEmise.add(infoTemp.iemeElement(k));
+					informationEmise.add(infoTemp.iemeElement(k)); // Construction de l'info émise
 				}
 				
-				/*System.out.println("Nb ech recu : " + informationRecue.nbElements());
-				System.out.println("Nb ech emis : " + informationEmise.nbElements() );*/
 		
 			}
 
