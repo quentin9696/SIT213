@@ -69,9 +69,6 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 			infoTemp.add(val);
 		}
 		
-		// On libère l'information reçue ... (qui est celle crée par le transmetteurMultiTrajet)
-		//informationRecue.vider();
-		
 		for (int i = 0; i < nbEch; i++) //parcours des échantillons significatifs
 		{
 			double temp = infoTemp.iemeElement(i);
@@ -94,7 +91,7 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 				}
 				
 				// On libère l'information temporaire (utile ou pas ?)
-				//infoTemp.vider();
+				infoTemp.vider();
 				
 			}
 
@@ -116,6 +113,7 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 	@Override
 	public void recyclerRAM() {
 		// TODO Auto-generated method stub
+		informationRecue.vider();
 	}
 	
 	//Quelques methodes utiles pour connaitre les valeures min et max des listes 
