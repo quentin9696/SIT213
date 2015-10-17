@@ -1,9 +1,9 @@
 #!/bin/bash
 
-NBMESS=1000000
+NBMESS=999999
 FORME="NRZ"
 
-cmd_base="java  Simulateur  -mess  $NBMESS -nbEch  50 -snr  -4  -seed  10  -ampl  -1  1  -form  $FORME"
+cmd_base="java -Xmx8G Simulateur  -mess  $NBMESS -nbEch  50 -snr  -6  -seed  10  -ampl  -1  1  -form  $FORME"
 #cmd_base="java -Xmx8G Simulateur -mess $NBMESS -ampl -1 1 -form $FORME "
 
 echo "$cmd_base" >> "$FORME.txt"
