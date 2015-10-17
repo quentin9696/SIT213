@@ -64,14 +64,17 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 		
 		//  NE PAS TOUCHER ! ET UTILISER infoTemp !! MERCI POUR MES NEURONNES :D 
 		
+		
 		for(double val : informationRecue) {
 			infoTemp.add(val);
 		}
 		
+		// On libère l'information reçue ... (qui est celle crée par le transmetteurMultiTrajet)
+		//informationRecue.vider();
 		
 		for (int i = 0; i < nbEch; i++) //parcours des échantillons significatifs
 		{
-			double temp = informationRecue.iemeElement(i);
+			double temp = infoTemp.iemeElement(i);
 			for (int j = 0; j < tau.size(); j++)
 			{
 				int delta = tau.get(j);
@@ -90,7 +93,9 @@ public class RecepteurAnalogiqueMultiTrajet extends Transmetteur<Double, Double>
 					informationEmise.add(infoTemp.iemeElement(k)); // Construction de l'info émise
 				}
 				
-		
+				// On libère l'information temporaire (utile ou pas ?)
+				//infoTemp.vider();
+				
 			}
 
 	/**
