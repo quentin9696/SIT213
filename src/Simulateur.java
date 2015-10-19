@@ -474,11 +474,13 @@ import java.io.PrintWriter;
   				recepteurMultiTrajet.emettre();
   			}
   			
+  			recepteur.emettre();
+
+  			
   			if(avecTransducteur) {
   				recepteurTransducteur.emettre();
   			}
   			
-  			recepteur.emettre();
   			
   		} catch (InformationNonConforme e) {
   			// TODO Auto-generated catch block
