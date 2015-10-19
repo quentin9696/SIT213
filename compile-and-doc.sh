@@ -40,5 +40,4 @@ echo '######### Fin de la javadoc #########'
 
 echo '######### Début de la compilation #########'
 javac -sourcepath $sources -d ./bin $sources/Simulateur.java
-javac -sourcepath $sources -d ./bin $sources/Histogramme.java
 echo '######### Fin de la compilation #########'
