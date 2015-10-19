@@ -76,9 +76,14 @@ import java.io.PrintWriter;
       /** le composant recepteur (information echentillonnée en information logique) */
       private			Transmetteur<Double, Boolean> recepteur = null;
    /** le  composant Destination de la chaine de transmission */
-      private			  Destination <Boolean>  destination = null;
+      private			Destination <Boolean>  destination = null;
+   /** utilisation des transducteurs */
+      private 			boolean avecTransducteur = false;
+   /** le composant de l'emetteur du transducteur */
+      private 			EmetteurTransducteur emetteurTransducteur = null;
+   /** le composant de l'emetteur du transducteur */
+      private 			RecepteurTransducteur recepteurTransducteur = null;    
       
-   	
    
    /** Le constructeur de Simulateur construit une chaine de transmission composÃ©e d'une Source <Boolean>, d'une Destination <Boolean> et de Transmetteur(s) [voir la mÃ©thode analyseArguments]...  
    * <br> Les diffÃ©rents composants de la chaine de transmission (Source, Transmetteur(s), Destination, Sonde(s) de visualisation) sont crÃ©Ã©s et connectÃ©s.
@@ -112,6 +117,9 @@ import java.io.PrintWriter;
         	 }
          }
          
+         if(avecTransducteur) {
+        	 emetteurTransducteur = new EmetteurTransducteur();
+         }
          
          // Emetteur/Recepteur analogique
          emetteur = new EmetteurAnalogique(min, max, forme, nbEch);
@@ -138,36 +146,65 @@ import java.io.PrintWriter;
         	 
          }
          
-         
+         if(avecTransducteur) {
+        	 recepteurTransducteur = new RecepteurTransducteur();
+         }
          
          // Destination 
          destination = new DestinationFinale();
          
          // Connection entre les modules
          
-         source.connecter(emetteur);
+         if(avecTransducteur) {
+        	 source.connecter(emetteurTransducteur);
+        	 emetteurTransducteur.connecter(emetteur);
+         }
+         else {
+        	 source.connecter(emetteur);
+         }
+         
+         
          
     	 
          //On ajout les briques multi-trajet s'il y en a 
     	 if(avecMultiTrajet) {
     		 emetteur.connecter(transmetteurMultiTrajet);
-    		 transmetteurMultiTrajet.connecter(transmetteurAnalogique);
+			 transmetteurMultiTrajet.connecter(transmetteurAnalogique);
     		 transmetteurAnalogique.connecter(recepteurMultiTrajet);
     		 recepteurMultiTrajet.connecter(recepteur);
+    		 
+    		 if(avecTransducteur) {
+    			 recepteur.connecter(recepteurTransducteur);
+    		 }
+    		 
     	 }
     	 else {
     		 emetteur.connecter(transmetteurAnalogique);
-             transmetteurAnalogique.connecter(recepteur);
+    		 transmetteurAnalogique.connecter(recepteur);
+    		 
+    		 if(avecTransducteur) {
+    			 recepteur.connecter(recepteurTransducteur);
+    		 }
+    		  
     	 }
          
     	 // Le recepteur est toujours connecté à la destination !
-         recepteur.connecter(destination);
+    	 if(avecTransducteur) {
+    		 recepteurTransducteur.connecter(destination);
+    	 }
+    	 else {
+    		 recepteur.connecter(destination);
+    	 }
+         
          
          
          // Ajout des sonde si option -s
          if(affichage) {
         	 SondeLogique sl1 = new SondeLogique("Source", 150);
              SondeLogique sl2 = new SondeLogique("Destination", 150);
+             SondeLogique sl3 = new SondeLogique("Sortie Emetteur Transducteur", 150);
+             SondeLogique sl4 = new SondeLogique("Sortie Recepteur Transducteur", 150);
+             
              SondeAnalogique sa1 = new SondeAnalogique("Sortie Emetteur");
              SondeAnalogique sa2 = new SondeAnalogique("Sortie Transmetteur Analogique");
              
@@ -175,6 +212,12 @@ import java.io.PrintWriter;
              SondeAnalogique sa4 = new SondeAnalogique("Sortie Recepteur multi-trajet");
              
              source.connecter(sl1);
+             if(avecTransducteur) {
+            	 emetteurTransducteur.connecter(sl3);
+            	 recepteurTransducteur.connecter(sl4);
+             }
+             
+             
              emetteur.connecter(sa1);
              
              transmetteurAnalogique.connecter(sa2);
@@ -183,6 +226,7 @@ import java.io.PrintWriter;
             	 transmetteurMultiTrajet.connecter(sa3);
             	 recepteurMultiTrajet.connecter(sa4);
              }
+             
              
              recepteur.connecter(sl2);
              
@@ -383,7 +427,10 @@ import java.io.PrintWriter;
 		   		
          	   	
 		   		avecMultiTrajet = true; 
-            }                     
+            }
+            else if(args[i].matches("-aveugle")) {
+            	avecTransducteur = true;
+            }
             else 
             	throw new ArgumentsException("Option invalide :"+ args[i]);
          }
@@ -410,7 +457,11 @@ import java.io.PrintWriter;
          
     	 try {
   			source.emettre();
-
+  			
+  			if(avecTransducteur) {
+  				emetteurTransducteur.emettre();
+  			}
+  			
   			emetteur.emettre();
   			
   			if(avecMultiTrajet) {
@@ -421,6 +472,10 @@ import java.io.PrintWriter;
   			
   			if(avecMultiTrajet) {
   				recepteurMultiTrajet.emettre();
+  			}
+  			
+  			if(avecTransducteur) {
+  				recepteurTransducteur.emettre();
   			}
   			
   			recepteur.emettre();
