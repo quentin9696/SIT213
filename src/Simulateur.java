@@ -82,7 +82,9 @@ import java.io.PrintWriter;
    /** le composant de l'emetteur du transducteur */
       private 			EmetteurTransducteur emetteurTransducteur = null;
    /** le composant de l'emetteur du transducteur */
-      private 			RecepteurTransducteur recepteurTransducteur = null;    
+      private 			RecepteurTransducteur recepteurTransducteur = null;   
+      
+      private 			boolean avecOeil = false;
       
    
    /** Le constructeur de Simulateur construit une chaine de transmission composÃ©e d'une Source <Boolean>, d'une Destination <Boolean> et de Transmetteur(s) [voir la mÃ©thode analyseArguments]...  
@@ -222,6 +224,7 @@ import java.io.PrintWriter;
              
              transmetteurAnalogique.connecter(sa2);
              
+             
              if(avecMultiTrajet) {
             	 transmetteurMultiTrajet.connecter(sa3);
             	 recepteurMultiTrajet.connecter(sa4);
@@ -230,6 +233,15 @@ import java.io.PrintWriter;
              
              recepteur.connecter(sl2);
              
+         }
+         
+         if(avecOeil) {
+        	 
+             //Diagramme oeil !
+             SondeDiagrammeOeil sdo = new SondeDiagrammeOeil("Diagramme reception", nbEch, 4);
+             
+        	// Diagremme oeil ?
+             transmetteurAnalogique.connecter(sdo);
          }
       	
       }
@@ -428,8 +440,11 @@ import java.io.PrintWriter;
          	   	
 		   		avecMultiTrajet = true; 
             }
-            else if(args[i].matches("-aveugle")) {
+            else if(args[i].matches("-transducteur")) {
             	avecTransducteur = true;
+            }
+            else if(args[i].matches("-oeil")) {
+            	avecOeil = true;
             }
             else 
             	throw new ArgumentsException("Option invalide :"+ args[i]);
