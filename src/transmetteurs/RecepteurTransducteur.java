@@ -35,11 +35,10 @@ public class RecepteurTransducteur extends Transmetteur<Boolean, Boolean> {
 		
 		//On prend les bits 3 à 3
 		for(int i = 0; i < information.nbElements(); i+=3) {
-			if ((!information.iemeElement(i) && !information.iemeElement(i+1) && information.iemeElement(i+2)) 
-					|| (information.iemeElement(i) && !information.iemeElement(i+1) && !information.iemeElement(i+2))
-					|| (information.iemeElement(i) && !information.iemeElement(i+1) && information.iemeElement(i+2))
-					|| (information.iemeElement(i) && information.iemeElement(i+1) && information.iemeElement(i+2))) 
-					{
+			if ((information.iemeElement(i) && !information.iemeElement(i+1)) 
+					||(!information.iemeElement(i+1) && information.iemeElement(i+2))
+					|| (information.iemeElement(i) && information.iemeElement(i+2))
+)					{
 						informationEmise.add(true);
 					}
 			else
