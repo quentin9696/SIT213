@@ -5,7 +5,7 @@
 
 
 /** 
- * Classe réalisant l'affichage d'information composée d'éléments réels (float)
+ * Classe réalisant l'affichage d'information composée d'éléments réels (double)
  * @author prou
  */
    public class SondeAnalogique extends Sonde <Double> {

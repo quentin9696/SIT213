@@ -5,8 +5,8 @@
 
 
 /** 
- * Classe réalisant l'affichage d'information composée d'éléments réels (float)
- * @author prou
+ * Classe réalisant le diagramme de l'oeil d'information composée d'éléments réels (double)
+ * @author vallin
  */
    public class SondeAnalogiqueHistogramme extends Sonde <Integer> {
     

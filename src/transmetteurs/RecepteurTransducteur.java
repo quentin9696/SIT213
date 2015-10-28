@@ -5,10 +5,16 @@ import java.util.ArrayList;
 import destinations.DestinationInterface;
 import information.Information;
 import information.InformationNonConforme;
+/**
+ * 
+ * Décodage de source et correction de l'erreur  
+ *
+ */
 
 public class RecepteurTransducteur extends Transmetteur<Boolean, Boolean> {
 	/**
 	 * Reception des bits à encoder et encodage
+	 * @param information l'information à recevoir
 	 */
 	@Override
 	public void recevoir(Information<Boolean> information)
@@ -26,6 +32,8 @@ public class RecepteurTransducteur extends Transmetteur<Boolean, Boolean> {
 		{
 			decodage.add(false);
 		}*/
+		
+		//On prend les bits 3 à 3
 		for(int i = 0; i < information.nbElements(); i+=3) {
 			if ((!information.iemeElement(i) && !information.iemeElement(i+1) && information.iemeElement(i+2)) 
 					|| (information.iemeElement(i) && !information.iemeElement(i+1) && !information.iemeElement(i+2))

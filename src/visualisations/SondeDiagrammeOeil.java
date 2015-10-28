@@ -5,8 +5,8 @@
 
 
 /** 
- * Classe réalisant l'affichage d'information composée d'éléments réels (float)
- * @author prou
+ * Classe réalisant l'affichage d'information composée d'éléments réels (double)
+ * @author vallin
  */
    public class SondeDiagrammeOeil extends Sonde <Double> {
     
@@ -14,7 +14,7 @@
 	   private int nbEch;
 	   private int nbSymbole;
     /**
-    * pour construire une sonde analogique  
+    * pour construire une sonde diagramme de l'oeil  
     * @param nom  le nom de la fenêtre d'affichage
     */
       public SondeDiagrammeOeil(String nom, int nbEch, int nbSym) {

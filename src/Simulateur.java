@@ -238,12 +238,13 @@ import java.io.PrintWriter;
              
          }
          
+         // Diagremme oeil ?
          if(avecOeil) {
         	 
              //Diagramme oeil !
              SondeDiagrammeOeil sdo = new SondeDiagrammeOeil("Diagramme reception", nbEch, 4);
              
-        	// Diagremme oeil ?
+        	
              transmetteurAnalogique.connecter(sdo);
          }
       	

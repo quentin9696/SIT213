@@ -3,7 +3,7 @@ package visualisations;
 	
 
 /** 
-* @author B. Prou
+* @author Q. Vallin
 *
 */
    import java.awt.*;
