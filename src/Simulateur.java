@@ -205,8 +205,11 @@ import java.io.PrintWriter;
         	 SondeLogique sl1 = new SondeLogique("Source", 150);
              SondeLogique sl2 = new SondeLogique("Destination", 150);
              SondeLogique sl3 = new SondeLogique("Sortie Emetteur Transducteur", 150);
-             SondeLogique sl4 = new SondeLogique("Sortie Recepteur Transducteur", 150);
-             
+             SondeLogique sl4 = new SondeLogique("Destination", 150);
+             if(avecTransducteur)
+             {
+            	 sl2 = new SondeLogique("Sortie recepteur analogique", 150);
+             }
              SondeAnalogique sa1 = new SondeAnalogique("Sortie Emetteur");
              SondeAnalogique sa2 = new SondeAnalogique("Sortie Transmetteur Analogique");
              

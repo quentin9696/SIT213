@@ -7,7 +7,9 @@ import information.Information;
 import information.InformationNonConforme;
 
 public class RecepteurTransducteur extends Transmetteur<Boolean, Boolean> {
-
+	/**
+	 * Reception des bits à encoder et encodage
+	 */
 	@Override
 	public void recevoir(Information<Boolean> information)
 			throws InformationNonConforme {
@@ -36,7 +38,9 @@ public class RecepteurTransducteur extends Transmetteur<Boolean, Boolean> {
 				informationEmise.add(false);
 		}
 	}
-
+/**
+ * Emission des bits encodés
+ */
 	@Override
 	public void emettre() throws InformationNonConforme {
 		// TODO Auto-generated method stub
